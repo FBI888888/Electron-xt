@@ -1,0 +1,1939 @@
+博主个人信息接口：
+curl 'https://www.xingtu.cn/gw/api/author/get_author_base_info?o_author_id=6690312095184977924&platform_source=1&platform_channel=1&recommend=true&need_sec_uid=true&need_linkage_info=true' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6690312095184977924?market_track_id=CBJOSFP6UKBJ5E4KY0IS&search_session_id=7583710683519877158&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+ 博主个人信息接口返回响应：
+ {
+     "abandon_sign_result": 0,
+     "appeal_id": "0",
+     "author_avatar_frame_icon": 0,
+     "author_type": 3,
+     "avatar_uri": "https://p11.douyinpic.com/aweme/1080x1080/aweme-avatar/tos-cn-avt-0015_bfb0a3c99e34c1a20df97ec2cda93458.jpeg?from=3782654143",
+     "avg_play": 0,
+     "aweme_tags": [],
+     "base64_qrcode": "iVBORw0KGgoAAAANSUhEUgAAAWgAAAFoAQAAAABSnlx4AAACZUlEQVR4nO2awW7kMAxDycX8/y+zB0qOPYseBlBau9EUmCbNOwiqoFC0KHzw+fcJ3HTTTTfd9I30CwDoaxHyrRjXFJVPb47kGfQLAEaaEb9HuuenN0fyDNr5BgEBVGaYYvxR4+nNkTyRJiDJuY5/wS9F8hA6qzpTzTXh28Z9DB39xO1CFCgqq5uirqc3R/IM2vmOIs78Uv7x9VTi+8R9Kk2td1xE4fvzfeI+mibpV6Qy16QEgRAIkGw9WEjLs46TKhGA6G9QKRV/IpJn0AQAEpA1ydVV4qlm+s5I/jwd+gTu1fxm3skC3yfuU+kXEMoP1iKRXzfzzD9d+RvFfTRNwINl3MzzDtB6sJDOekZUtWLewTzvjIt94j6adoIt/6K1uNgpMBp595MS+urXHm/eHfAscHR9V9IEKJIK3a1U37ZSssVsF/eZtKDoKW8FbtGS6mS7uA+k06/ScAcxaXDFq7Lfl6U0s6GE4h5nDsBqEG4W96m0p0hdujs1OMMG73m+ih6Gt/tH6MLU4NdJcZ9f1tDD385ZHpjkYKaane8ieto/yVMdRl8ZutzubPtVFfTwq+KwIXS3cugMG6X1dyntoQaksJyoAYpabz1YQ7ufjF0fTt434JzLX91PKuh8R8ask064+LY92PuDtbTGKeaqwdMpbH1SQy/7sWERTrs+0brtYu0U96n0sh9roZJrspF9z56d7xp62Y8d7uBQhMrK7n5yAx0KcNo/GesnPxzJQ+j/9k+Gk9L9pIZe9mOR8m/ZP5m2f/aJ+1R62Y/FpUjGIls6iK2/S+h1//U3I2m66aabbvqTzxcOlyv9C7+HMwAAAABJRU5ErkJggg==",
+     "base_resp": {
+         "status_code": 0,
+         "status_message": "Success"
+     },
+     "category_id": "1",
+     "city": "朝阳区",
+     "content_theme_labels": [
+         "SUV测评",
+         "超跑测评",
+         "新能源汽车资讯",
+         "自驾旅行",
+         "汽车趣闻",
+         "新车定制",
+         "电动车充电",
+         "车展资讯",
+         "越野车",
+         "汽车行情"
+     ],
+     "core_user_id": "73524430572",
+     "create_time": "1557709671",
+     "creator_type": 0,
+     "e_commerce_enable": true,
+     "follower": 607400,
+     "gender": 1,
+     "grade": 0,
+     "has_phone": true,
+     "id": "6690312095184977924",
+     "industry_list": [],
+     "is_cpm_project_author": true,
+     "is_game_author": false,
+     "is_online": true,
+     "is_plan_author": false,
+     "is_star": true,
+     "is_visible": true,
+     "lowest_price": 1000,
+     "mcn_introduction": "",
+     "mcn_logo": "",
+     "mcn_name": "",
+     "modify_time": "1765649699",
+     "nick_name": "学长说车",
+     "online_status": 1,
+     "opened_task_category": "[1, 3, 5, 4, 52, 103, 133, 120, 6]",
+     "platform": [
+         1,
+         2,
+         3,
+         4,
+         5
+     ],
+     "platform_channel": [
+         20,
+         1,
+         10
+     ],
+     "platform_source": 1,
+     "protocol_id": "20210524",
+     "province": "北京市",
+     "qrcode_url": "",
+     "sec_uid": "MS4wLjABAAAAc887mU_pM0FeM84xOSzWoPah3ki1ur5-ObwIy_zoaS8",
+     "short_id": "107522061",
+     "star_tags": [],
+     "status": 1,
+     "tags": "[\"\\u6c7d\\u8f66\"]",
+     "tags_author_style": "[]",
+     "tags_ids": "[31]",
+     "tags_ids_level_two": "[32]",
+     "tags_level_two": "[\"\\u6c7d\\u8f66\\u6d4b\\u8bc4\"]",
+     "tags_relation": {
+         "汽车": [
+             "汽车测评"
+         ]
+     },
+     "task_status": 1,
+     "unique_id": "xuezhangshuoche"
+ }
+博主个人信息接口所需字段：
+达人昵称（nick_name）
+归属地（province、city两个值拼接）
+性别（gender，1为男，0为女，转换为汉字）
+抖音ID（short_id）
+抖音主页（“https://www.douyin.com/user/”+sec_uid（拼接））
+MCN机构（mcn_name）
+达人类型（tags_relation（取键-值拼接））
+内容主题（content_theme_labels）
+
+
+博主商业卡片信息接口：
+curl ^"https://www.xingtu.cn/gw/api/gauthor/author_get_business_card_info?o_author_id=6690312095184977924^" ^
+  -H ^"accept: application/json, text/plain, */*^" ^
+  -H ^"accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6^" ^
+  -H ^"agw-js-conv: str^" ^
+  -b ^"Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8^%^2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8^%^2C; sid_guard=4746dd224119fe8321bc64d873ed7428^%^7C1765720117^%^7C5184002^%^7CThu^%^2C+12-Feb-2026+13^%^3A48^%^3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt^%^7C17^%^7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk^%^3D; session_tlb_tag_bk=sttt^%^7C17^%^7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk^%^3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9^" ^
+  -H ^"priority: u=1, i^" ^
+  -H ^"referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6690312095184977924?market_track_id=CBJOSFP6UKBJ5E4KY0IS^&search_session_id=7583710683519877158^&possessStarId^" ^
+  -H ^"sec-ch-ua: ^\^"Microsoft Edge^\^";v=^\^"143^\^", ^\^"Chromium^\^";v=^\^"143^\^", ^\^"Not A(Brand^\^";v=^\^"24^\^"^" ^
+  -H ^"sec-ch-ua-mobile: ?0^" ^
+  -H ^"sec-ch-ua-platform: ^\^"Windows^\^"^" ^
+  -H ^"sec-fetch-dest: empty^" ^
+  -H ^"sec-fetch-mode: cors^" ^
+  -H ^"sec-fetch-site: same-origin^" ^
+  -H ^"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0^" ^
+  -H ^"x-login-source: 1^"
+博主商业卡片信息接口返回响应：
+{
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "card_info": {
+        "author_avatar_frame_icon": 0,
+        "avatar_uri": "https://p11.douyinpic.com/aweme/1080x1080/aweme-avatar/tos-cn-avt-0015_bfb0a3c99e34c1a20df97ec2cda93458.jpeg?from=3782654143",
+        "city": "朝阳区",
+        "contact_status": 1,
+        "cooperation_brand": "玛莎拉蒂 奥迪 问界 蔚来 本田等。",
+        "credit_score": "100",
+        "email": "",
+        "follower": "607400",
+        "has_wechat": true,
+        "lark_nick_name": "",
+        "mcn_info": {},
+        "nick_name": "学长说车",
+        "phone": "156********",
+        "privacy_status": 1,
+        "self_intro": "只接60s+\n\n1: 2018年至今坚持做汽车垂类内容 抖音最早一批汽车博主 粉丝极其精准 勿拿洗的号及水号比！\n\n2:粉丝画像显示18-40岁群体最多 覆盖有用车需求的群体 可以为车企精准赋能！\n\n3:博主本人山东工艺美术学院汽车设计科班出身！支持学信网查资历，并拥有多辆跑车 玩车经验丰富 对车辆的试驾体验有绝对话语权！\n",
+        "short_id": "107522061",
+        "show_wechat": 2,
+        "star_excellent_author": "1",
+        "unique_id": "xuezhangshuoche",
+        "wechat": "xuezhangshuoche"
+    }
+}
+博主商业卡片信息接口所需字段：
+个人介绍（self_intro）
+粉丝数（follower）
+微信号（wechat）
+合作品牌（cooperation_brand）
+
+
+博主月连接用户数接口：
+curl 'https://www.xingtu.cn/gw/api/data_sp/check_author_display?o_author_id=6690312095184977924&platform_source=1&platform_channel=1' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6690312095184977924?market_track_id=CBJOSFP6UKBJ5E4KY0IS&search_session_id=7583710683519877158&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+博主月连接用户数接口返回响应：
+{
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "can_receive": true,
+    "follower": 607400,
+    "link_cnt": 1565571,
+    "release_videos_cnt": 7
+}
+博主月连接用户数接口所需字段：
+月连接用户数（link_cnt，万制表示，如1565571，转换表示为156.6w）
+
+
+博主月涨粉率接口：
+curl 'https://www.xingtu.cn/gw/api/aggregator/get_author_side_base_info?o_author_id=6690312095184977924' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6690312095184977924?market_track_id=CBJOSFP6UKBJ5E4KY0IS&search_session_id=7583710683519877158&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+博主月涨粉率接口返回响应：
+{
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "fans_growth_rate_30d": "0.2069099810837877"
+}
+博主月涨粉率接口所需字段：
+月涨粉率（fans_growth_rate_30d，保留两位小数百分制表示）
+
+
+博主合作报价接口：
+curl 'https://www.xingtu.cn/gw/api/author/get_author_marketing_info?o_author_id=6690312095184977924&platform_source=1&platform_channel=1' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6690312095184977924?market_track_id=CBJOSFP6UKBJ5E4KY0IS&search_session_id=7583710683519877158&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+博主合作报价接口返回响应：
+{
+    "activity_info": [],
+    "base_resp": {
+        "status_code": 0,
+        "status_message": "Success"
+    },
+    "hot_list_ranks": [],
+    "industry_tags": [
+        "汽车-汽车综合服务平台",
+        "零售-其他零售",
+        "汽车-汽车厂商"
+    ],
+    "price_info": [
+        {
+            "activity_info": [],
+            "author_id": "6690312095184977924",
+            "desc": "1-20s视频",
+            "do_fold": false,
+            "enable": true,
+            "end_time": "1767196799",
+            "field": "price",
+            "has_discount": false,
+            "is_open": true,
+            "need_price": true,
+            "online_status": 1,
+            "origin_price": 15800,
+            "platform_activity_id": "0",
+            "platform_source": 1,
+            "price": 15800,
+            "settlement_desc": "固定价格",
+            "settlement_type": 2,
+            "start_time": "1764595616",
+            "task_category": 1,
+            "task_category_status": 1,
+            "template_list": [],
+            "video_type": 1
+        },
+        {
+            "activity_info": [],
+            "author_id": "6690312095184977924",
+            "desc": "21-60s视频",
+            "do_fold": false,
+            "enable": true,
+            "end_time": "1767196799",
+            "field": "long_video_price",
+            "has_discount": false,
+            "is_open": true,
+            "need_price": true,
+            "online_status": 1,
+            "origin_price": 35000,
+            "platform_activity_id": "0",
+            "platform_source": 1,
+            "price": 35000,
+            "settlement_desc": "固定价格",
+            "settlement_type": 2,
+            "start_time": "1764595616",
+            "task_category": 1,
+            "task_category_status": 1,
+            "template_list": [],
+            "video_type": 2
+        },
+        {
+            "activity_info": [],
+            "author_id": "6690312095184977924",
+            "desc": "60s以上视频",
+            "do_fold": false,
+            "enable": true,
+            "end_time": "1767196799",
+            "field": "price",
+            "has_discount": false,
+            "is_open": true,
+            "need_price": true,
+            "online_status": 1,
+            "origin_price": 60000,
+            "platform_activity_id": "0",
+            "platform_source": 1,
+            "price": 60000,
+            "settlement_desc": "固定价格",
+            "settlement_type": 2,
+            "start_time": "1764595616",
+            "task_category": 1,
+            "task_category_status": 1,
+            "template_list": [],
+            "video_type": 71
+        },
+        {
+            "activity_info": [],
+            "author_id": "6690312095184977924",
+            "desc": "短直种草",
+            "do_fold": false,
+            "enable": true,
+            "end_time": "1767196799",
+            "field": "price",
+            "has_discount": false,
+            "is_open": true,
+            "need_price": true,
+            "online_status": 1,
+            "origin_price": 60000,
+            "platform_activity_id": "0",
+            "platform_source": 1,
+            "price": 60000,
+            "settlement_desc": "固定价格",
+            "settlement_type": 2,
+            "start_time": "1764595616",
+            "task_category": 1,
+            "task_category_status": 1,
+            "template_list": [],
+            "video_type": 150
+        },
+        {
+            "activity_info": [],
+            "author_id": "6690312095184977924",
+            "desc": "按自然播放量结算",
+            "do_fold": true,
+            "enable": false,
+            "field": "price",
+            "has_discount": false,
+            "is_open": false,
+            "need_price": true,
+            "online_status": 1,
+            "platform_activity_id": "0",
+            "platform_source": 1,
+            "settlement_desc": "按自然播放量结算",
+            "settlement_type": 30,
+            "task_category": 1,
+            "task_category_status": 1,
+            "template_list": [],
+            "video_type": 92
+        },
+        {
+            "activity_info": [],
+            "author_id": "6690312095184977924",
+            "desc": "多视频推送广告平台",
+            "enable": true,
+            "end_time": "2145916800",
+            "field": "price",
+            "has_discount": false,
+            "is_open": true,
+            "need_price": true,
+            "online_status": 1,
+            "origin_price": 500,
+            "platform_activity_id": "0",
+            "platform_source": 1,
+            "price": 500,
+            "settlement_desc": "固定价格",
+            "settlement_type": 2,
+            "start_time": "1630028583",
+            "task_category": 103,
+            "task_category_status": 1,
+            "template_list": [],
+            "video_type": 104
+        },
+        {
+            "activity_info": [],
+            "author_id": "6690312095184977924",
+            "desc": "抖音短视频合集任务",
+            "do_fold": true,
+            "enable": true,
+            "end_time": "2145916800",
+            "field": "price",
+            "has_discount": false,
+            "is_open": true,
+            "need_price": true,
+            "online_status": 1,
+            "origin_price": 30000,
+            "platform_activity_id": "0",
+            "platform_source": 1,
+            "price": 30000,
+            "settlement_desc": "固定价格",
+            "settlement_type": 2,
+            "start_time": "1748707200",
+            "task_category": 1,
+            "task_category_status": 1,
+            "template_list": [],
+            "video_type": 73
+        },
+        {
+            "activity_info": [],
+            "author_id": "6690312095184977924",
+            "desc": "单视频推送广告平台",
+            "enable": true,
+            "end_time": "2145916800",
+            "field": "price",
+            "has_discount": false,
+            "is_open": true,
+            "need_price": true,
+            "online_status": 1,
+            "origin_price": 500,
+            "platform_activity_id": "0",
+            "platform_source": 1,
+            "price": 500,
+            "settlement_desc": "固定价格",
+            "settlement_type": 2,
+            "start_time": "1630028583",
+            "task_category": 103,
+            "task_category_status": 1,
+            "template_list": [],
+            "video_type": 103
+        },
+        {
+            "activity_info": [],
+            "author_id": "6690312095184977924",
+            "desc": "下载",
+            "enable": true,
+            "end_time": "2145916800",
+            "field": "price",
+            "has_discount": false,
+            "is_open": true,
+            "need_price": true,
+            "online_status": 1,
+            "origin_price": 500,
+            "platform_activity_id": "0",
+            "platform_source": 1,
+            "price": 500,
+            "settlement_desc": "固定价格",
+            "settlement_type": 2,
+            "start_time": "1630028583",
+            "task_category": 103,
+            "task_category_status": 1,
+            "template_list": [],
+            "video_type": 105
+        },
+        {
+            "activity_info": [],
+            "author_id": "6690312095184977924",
+            "desc": "抖音短视频共创-参与达人",
+            "do_fold": true,
+            "enable": true,
+            "end_time": "2145916800",
+            "field": "price",
+            "has_discount": false,
+            "is_open": true,
+            "need_price": true,
+            "online_status": 1,
+            "origin_price": 60000,
+            "platform_activity_id": "0",
+            "platform_source": 1,
+            "price": 60000,
+            "settlement_desc": "固定价格",
+            "settlement_type": 2,
+            "start_time": "1748707200",
+            "task_category": 1,
+            "task_category_status": 1,
+            "template_list": [],
+            "video_type": 91
+        }
+    ]
+}
+博主合作报价接口所需字段：
+行业标签-industry_tags
+报价-1-20s视频（price_info中desc为1-20s视频的price）
+报价-21-60s视频（price_info中desc为21-60s视频的price）
+报价-60s以上视频（price_info中desc为60s以上视频的price）
+其他报价-用“、”分割拼接price_info除上述3个其余enable为true的其他报价
+
+博主商业能力接口：
+curl 'https://www.xingtu.cn/gw/api/data_sp/get_author_spread_info?o_author_id=6690312095184977924&platform_source=1&platform_channel=1&type=2&flow_type=0&only_assign=true&range=2' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9; s_v_web_id=verify_mj5snvur_cLCiHW2s_aznE_4GNQ_AJYk_tVI4PmzXwJFo' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6690312095184977924?market_track_id=CBJOSFP6UKBJ5E4KY0IS&search_session_id=7583710683519877158&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+此接口为多种情况：
+当platform_source=1&platform_channel=1&type=2&flow_type=0&only_assign=true&range=2，此时情况名为“商业能力-传播价值-星图视频-近30天-只看指派”
+当platform_source=1&platform_channel=1&type=2&flow_type=0&only_assign=true&range=3，此时情况名为“商业能力-传播价值-星图视频-近90天-只看指派”
+当platform_source=1&platform_channel=1&type=2&flow_type=0&only_assign=false&range=2，此时情况名为“商业能力-传播价值-星图视频-近30天”
+当platform_source=1&platform_channel=1&type=2&flow_type=0&only_assign=false&range=3，此时情况名为“商业能力-传播价值-星图视频-近90天”
+当platform_source=1&platform_channel=1&type=1&flow_type=0&only_assign=false&range=2，此时情况名为“商业能力-传播价值-个人视频-近30天”
+当platform_source=1&platform_channel=1&type=1&flow_type=0&only_assign=false&range=3，此时情况名为“商业能力-传播价值-个人视频-近90天”
+博主商业能力接口返回响应：
+{
+    "avg_duration": "13440",
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "comment_avg": "4172",
+    "expect_cpe": {
+        "cpe_1_20": "173",
+        "cpe_21_60": "383",
+        "cpe_60": "657"
+    },
+    "expect_cpm": {
+        "cpm_1_20": "12495",
+        "cpm_21_60": "27679",
+        "cpm_60": "47451"
+    },
+    "interact_rate": {
+        "label": "汽车",
+        "overtake": 8177,
+        "value": 247
+    },
+    "item_num": "3",
+    "item_rate": {
+        "interact_rate": {},
+        "item_num": {
+            "label": "",
+            "value": 3
+        },
+        "play_mid": {
+            "label": "",
+            "overtake": 6425,
+            "value": 240903
+        }
+    },
+    "like_avg": "3410",
+    "play_mid": "240903",
+    "play_over_rate": {
+        "label": "汽车",
+        "overtake": 6938,
+        "value": 187
+    },
+    "play_stability": {
+        "label": "汽车"
+    },
+    "sales_expect_cpm": {
+        "cpm_1_20": "19530",
+        "cpm_21_60": "43262",
+        "cpm_60": "74164"
+    },
+    "share_avg": "795"
+}
+博主商业能力接口所需字段（按情况名拼接字段）：
+情况名-播放量中位数（item_rate中play_mid中的value（万制表示，如240903，转换表示为24.0w））
+情况名-完播率（play_over_rate中的value（保留一位小数百分之表示，如187，转换表示为1.9%））
+情况名-互动率（interact_rate中的value（保留一位小数百分之表示，如247，转换表示为2.5%））
+情况名-发布作品（item_num）
+情况名-平均时长（avg_duration（秒制表示，如15952，转换表示为159.5s））
+情况名-平均点赞（like_avg）
+情况名-平均评论（comment_avg）
+情况名-平均转发（share_avg）
+
+
+博主效果预估接口：
+curl 'https://www.xingtu.cn/gw/api/aggregator/get_author_commerce_spread_info?o_author_id=7073011297398292511' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9; s_v_web_id=verify_mj5snvur_cLCiHW2s_aznE_4GNQ_AJYk_tVI4PmzXwJFo' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/7073011297398292511?market_track_id=CBJOSFP6UKBJ5E4KY0IS&search_session_id=7583710683519877158&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+博主效果预估接口返回响应：
+{
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "cpe_1_20": "0.5072",
+    "cpe_20_60": "0.6086",
+    "cpe_60": "0.7101",
+    "cpm_1_20": "39.7352",
+    "cpm_20_60": "47.6823",
+    "cpm_20_60_rank_percent": "0.026017199677506046",
+    "cpm_60": "55.6293",
+    "modify_time": "1765685508",
+    "platform_hot_rate": "1",
+    "sn_cpe_1_20": "0.5434",
+    "sn_cpe_20_60": "0.6521",
+    "sn_cpe_60": "0.7608",
+    "sn_cpm_1_20": "40.6906",
+    "sn_cpm_20_60": "48.8287",
+    "sn_cpm_60": "56.9668",
+    "sn_vv": "6143931",
+    "vv": "6291647"
+}
+博主效果预估接口所需字段：
+商业能力-传播价值-预期CPM-1-20s视频（cpm_1_20，保留两位小数）
+商业能力-传播价值-预期CPE-1-20s视频（cpe_1_20，保留两位小数）
+商业能力-传播价值-预期CPM-20-60s视频（cpm_21_60，保留两位小数）
+商业能力-传播价值-预期CPE-20-60s视频（cpe_21_60，保留两位小数）
+商业能力-传播价值-预期CPM-60s以上视频（cpm_60，保留两位小数）
+商业能力-传播价值-预期CPE-60s以上视频（cpe_60，保留两位小数）
+商业能力-传播价值-预期播放量（vv，万制表示，6291647，转换表示为629.2w）
+商业能力-传播价值-爆文率（platform_hot_rate，百分制表示，如1，转换表示为100%）
+
+
+博主种草价值接口：
+curl 'https://www.xingtu.cn/gw/api/aggregator/get_author_commerce_seed_base_info?o_author_id=7073011297398292511&range=90' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9; s_v_web_id=verify_mj5snvur_cLCiHW2s_aznE_4GNQ_AJYk_tVI4PmzXwJFo' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/7073011297398292511?market_track_id=CBJOSFP6UKBJ5E4KY0IS&search_session_id=7583710683519877158&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+此接口有多种情况：
+当range=30，情况名为“商业能力-种草价值-近30天”
+当range=90，情况名为“商业能力-种草价值-近30天”
+
+博主种草价值接口返回响应：
+{
+    "avg_a3_incr_cnt": "\u003e100,000",
+    "avg_a3_incr_cnt_rank_percent": "0.9",
+    "avg_search_after_view_cnt": "\u003e15,000",
+    "avg_search_after_view_cnt_rank_percent": "0.9",
+    "avg_search_after_view_rate": "0.1% - 0.25%",
+    "avg_search_after_view_rate_rank_percent": "0.5",
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "modify_time": "1765661399",
+    "star_overflow_avg_enter_shop_cost": "1 - 5",
+    "star_overflow_avg_enter_shop_cost_rank_percent": "0.01"
+}
+博主种草价值接口所需字段（分情况请求后拼接）：
+情况名-看后搜次数（avg_search_after_view_cnt）
+情况名-看后搜率（avg_search_after_view_rate）
+情况名-A3增长数（avg_a3_incr_cnt）
+情况名-进店成本（star_overflow_avg_enter_shop_cost）
+
+
+博主转化价值-星图短视频接口：
+curl 'https://www.xingtu.cn/gw/api/data_sp/get_author_convert_ability?o_author_id=6629722292110753806&platform_source=1&platform_channel=1&industry_id=0&range=2' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9; s_v_web_id=verify_mj5snvur_cLCiHW2s_aznE_4GNQ_AJYk_tVI4PmzXwJFo' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6629722292110753806?market_track_id=ZU9MLUVASRLH8CDLMF7U&search_session_id=7583731063903158298&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+此接口有多种情况：
+当platform_source=1&platform_channel=1&industry_id=0&range=1，情况名为“商业能力-转化价值-星图短视频-近7天”
+当platform_source=1&platform_channel=1&industry_id=0&range=2，情况名为“商业能力-转化价值-星图短视频-近30天”
+当platform_source=1&platform_channel=1&industry_id=0&range=3，情况名为“商业能力-转化价值-星图短视频-近90天”
+博主转化价值-星图短视频接口返回响应：
+{
+    "avg_sales_amount_range": "1万-10万",
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "category_items": [
+        {
+            "name": "食品饮料",
+            "rate": 1,
+            "sale_amount_range": "3000以下"
+        }
+    ],
+    "component_click_cnt_range": "1万-3万",
+    "component_click_rate_range": "2%以下",
+    "gpm_range": "0",
+    "rec_product_cnt": {
+        "value": "1"
+    },
+    "rec_product_price_range": "50-100",
+    "related_cpc_range": "10-12",
+    "related_video_cnt": {
+        "value": "30"
+    },
+    "video_vv_median": {
+        "value": "30743396"
+    }
+}
+博主转化价值-星图短视频接口所需字段（分情况请求后拼接）：
+情况名-相关视频数（related_video_cnt中的value）
+情况名-播放中位数（video_vv_median中的value，万制表示）
+情况名-组件点击量（component_click_cnt_range）
+情况名-组件点击率（component_click_rate_range）
+情况名-CPC（related_cpc_range）
+情况名-带货商品数（rec_product_cnt中的value）
+情况名-平均销售额（avg_sales_amount_range）
+情况名-带货商品价格（rec_product_price_range）
+情况名-GPM（gpm_range）
+
+博主转化价值-全部带货数据接口：
+curl 'https://www.xingtu.cn/gw/api/aggregator/get_author_video_live_linkage_stat?star_author_id=6629722292110753806&time_period=30' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9; s_v_web_id=verify_mj5snvur_cLCiHW2s_aznE_4GNQ_AJYk_tVI4PmzXwJFo' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6629722292110753806?market_track_id=ZU9MLUVASRLH8CDLMF7U&search_session_id=7583731063903158298&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+此接口有多种情况：
+当time_period=7，情况名为“商业能力-转化价值-全部带货数据-近7天”
+当time_period=30，情况名为“商业能力-转化价值-全部带货数据-近30天”
+博主转化价值-全部带货数据接口返回响应：
+{
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "ecom_stat": {
+        "atv_range": "50-200",
+        "author_level": "\"L6\"",
+        "ecom_live_cnt": "19",
+        "ecom_live_days": "16",
+        "ecom_live_show_cnt_ah": "5369072",
+        "ecom_live_watch_apv": 1.5,
+        "ecom_live_watch_cnt": "395116015",
+        "ecom_live_watch_ucnt": "9502634",
+        "gmv_range": "100万以上",
+        "gpm_range": "1000-3000",
+        "pay_cnt_range": "2万以上"
+    }
+}
+
+博主转化价值-全部带货数据接口所需字段（分情况请求后拼接）：
+情况名-成交GMV（gmv_range）
+情况名-成交订单数（pay_cnt_range）
+情况名-成交客单价（atv_range）
+情况名-达人带货等级（author_level）
+情况名-直播场次（ecom_live_cnt）
+情况名-直播天数（ecom_live_days）
+情况名-直播间曝光次数（ecom_live_watch_cnt，万制表示）
+情况名-直播间观看人数（ecom_live_watch_ucnt，万制表示）
+情况名-直播间观众平均看播次数（ecom_live_watch_apv）
+情况名-单小时直播间曝光次数（ecom_live_show_cnt_ah，万制表示）
+情况名-GPM（gpm_range）
+
+博主创作能力最新视频表现接口：
+curl 'https://www.xingtu.cn/gw/api/author/get_author_show_items_v2?o_author_id=6629722292110753806&platform_channel=1&platform_source=1&limit=10&only_assign=true&flow_type=0' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9; s_v_web_id=verify_mj5snvur_cLCiHW2s_aznE_4GNQ_AJYk_tVI4PmzXwJFo' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6629722292110753806?market_track_id=ZU9MLUVASRLH8CDLMF7U&search_session_id=7583731063903158298&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+此接口有多种情况：
+当platform_channel=1&platform_source=1&limit=10&only_assign=false&flow_type=0，情况名为“创造能力-最新视频”
+当platform_channel=1&platform_source=1&limit=10&only_assign=true&flow_type=0，情况名为“创造能力-最新视频-只看指派”
+博主创作能力最新视频表现接口返回响应：
+{
+    "base_resp": {
+        "status_code": 0,
+        "status_message": "Success"
+    },
+    "data_description": {
+        "interaction": {},
+        "interaction_enrollment": {},
+        "play_medium": {},
+        "play_medium_enrollment": {},
+        "video_view_rate": {},
+        "video_view_rate_enrollment": {}
+    },
+    "latest_item_info": [
+        {
+            "comment": 792,
+            "like": 28815,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 3596649,
+            "share": 9238,
+            "status": 1,
+            "title": "汽车油箱盖的奇怪问题 #每天一个汽车知识 @抖音汽车 @抖音小助手",
+        },
+        {
+            "comment": 171,
+            "like": 7773,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 788946,
+            "share": 1635,
+            "status": 1,
+            "title": "汽车这个问题搞定了 #每天一个汽车知识 @抖音汽车 @抖音小助手",
+        },
+        {
+            "comment": 588,
+            "like": 16045,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 935763,
+            "share": 3772,
+            "status": 1,
+            "title": "汽车方向盘的秘密 #每天一个汽车知识 @抖音汽车 @抖音小助手",
+        },
+        {
+            "comment": 484,
+            "like": 14880,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 1353754,
+            "share": 1295,
+            "status": 1,
+            "title": "汽车抖动厉害解决很简单 #每天一个汽车知识 @抖音汽车 @抖音小助手",
+        },
+        {
+            "comment": 593,
+            "like": 13933,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 936445,
+            "share": 1727,
+            "status": 1,
+            "title": "汽车油耗高是怎么回事 #每天一个汽车知识 @抖音汽车 @抖音小助手",
+        },
+        {
+            "comment": 394,
+            "like": 14011,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 1452185,
+            "share": 4302,
+            "status": 1,
+            "title": "汽车的奇怪问题你遇到过吗 #每天一个汽车知识 @抖音汽车 @抖音小助手",
+        },
+        {
+            "comment": 5,
+            "like": 3280,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 46699,
+            "share": 1,
+            "status": 1,
+            "title": "到时候看看长城汽车的这个新技术怎么样",
+        },
+        {
+            "comment": 30,
+            "like": 4210,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 344960,
+            "share": 41,
+            "status": 1,
+            "title": "热效率越高越省油？别被忽悠了！ #哈弗H6L",
+        },
+        {
+            "comment": 47,
+            "like": 5460,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 239594,
+            "share": 24,
+            "status": 1,
+            "title": "广州车展三炮齐发，一起来看看。 #广州车展 @抖音汽车",
+        },
+        {
+            "comment": 3069,
+            "like": 89228,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 7594791,
+            "share": 3593,
+            "status": 1,
+            "title": "汽车打不着火儿的原因在这里 #每天一个汽车知识 @抖音汽车 @抖音小助手",
+        },
+        {
+            "comment": 2162,
+            "like": 89821,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 6198467,
+            "share": 45626,
+            "status": 1,
+            "title": "汽车出现紧急情况自己解决 #每天一个汽车知识 @抖音汽车 @抖音小助手",
+        },
+        {
+            "comment": 912,
+            "like": 33735,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 2677804,
+            "share": 8482,
+            "status": 1,
+            "title": "汽车奇怪故障原因找到了 #每天一个汽车知识 @抖音汽车 @抖音小助手",
+        },
+        {
+            "comment": 660,
+            "like": 14358,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 911125,
+            "share": 2011,
+            "status": 1,
+            "title": "汽车有问题自己就能解决 #带你懂车 #每天一个汽车知识 @抖音汽车 @抖音小助手",
+        },
+        {
+            "comment": 2837,
+            "like": 153223,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 12173724,
+            "share": 63142,
+            "status": 1,
+            "title": "汽车应急功能你知道吗 #带你懂车 @抖音汽车 @抖音小助手 #每天一个汽车知识",
+        },
+        {
+            "comment": 2115,
+            "like": 70988,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 4762974,
+            "share": 6786,
+            "status": 1,
+            "title": "汽车发动机抖动的原因找到了 #带你懂车 #每天一个汽车知识 @抖音汽车 @抖音小助手",
+        }
+    ],
+    "latest_item_statics_antispam": {},
+    "latest_star_item_info": [
+        {
+            "comment": 2350,
+            "like": 63185,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 1294902,
+            "share": 502,
+            "status": 1,
+            "title": "带粉丝去看一台越野皮卡！ #2026款长城炮全家族焕新上市 #梦想成真长城炮",
+        },
+        {
+            "comment": 2484,
+            "like": 30978,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 1687542,
+            "share": 862,
+            "status": 1,
+            "title": "哈弗H6L有啥不一样? #哈弗H6L  #为爱升舱越级而来   #更省油的2.0T",
+        },
+        {
+            "comment": 3533,
+            "like": 27846,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 1494966,
+            "share": 933,
+            "status": 1,
+            "title": "哈弗H6L的油耗到底怎么样。 #哈弗H6L #更省油的2.0T #为爱升舱越级而来",
+        },
+        {
+            "comment": 475,
+            "like": 35327,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 2007187,
+            "share": 4268,
+            "status": 1,
+            "title": "跑长途之前检查一下车子，防止抛锚。 #美孚速霸 #快速应对保护长在 #美孚速霸引擎的蓝buff",
+        },
+        {
+            "comment": 188,
+            "like": 10804,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 191695,
+            "share": 868,
+            "status": 1,
+            "title": "这台车就是您创业路上的好伙伴。 #跨越双星智享未来 #跨越星光",
+        },
+        {
+            "comment": 339,
+            "like": 44064,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 1732681,
+            "share": 854,
+            "status": 1,
+            "title": "老司机换车为啥都选它 #一辆好车的标准 #买了不后悔的车#划算选广本 #广汽本田",
+        },
+        {
+            "comment": 1595,
+            "like": 57425,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 1784847,
+            "share": 319,
+            "status": 1,
+            "title": "为什么要看一辆车在极端场景下的表现 #魏建军说猛龙车手很猛  #哈弗猛龙征战敦煌越野耐力赛 #哈弗猛龙燃油版 #哈弗征战敦煌耐力赛#敦煌耐力赛最年轻女车手硬核完赛",
+        },
+        {
+            "comment": 284,
+            "like": 10547,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 1088988,
+            "share": 733,
+            "status": 1,
+            "title": "汽车抖动厉害，看看是什么原因 #汽车小常识 #带你懂车 #嘉实多 #嘉实多磁护",
+        },
+        {
+            "comment": 2430,
+            "like": 48567,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 3110542,
+            "share": 46189,
+            "status": 1,
+            "title": "汽车保养怎么做才省钱？ #赖氏父子",
+        },
+        {
+            "comment": 335,
+            "like": 6620,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 2561359,
+            "share": 532,
+            "status": 1,
+            "title": "6.88万起买能买到它？你确定不是痴人说梦？ #极狐T1#极狐t1开启预售68800元起#极狐汽车 #极狐T1家庭精品纯电新标杆",
+        },
+        {
+            "comment": 269,
+            "like": 15279,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 1007525,
+            "share": 163,
+            "status": 1,
+            "title": "选方盒子一定要选标杆！ 20万内的标杆是#哈弗猛龙2026款#哈弗猛龙#一部猛龙一种活法",
+        },
+        {
+            "comment": 134,
+            "like": 6566,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 1252281,
+            "share": 1162,
+            "status": 1,
+            "title": "普通人买车怎么选，看看这台CR-V。 #crv #买suv必看crv #全能家用suv唯有crv",
+        },
+        {
+            "comment": 702,
+            "like": 25190,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 745071,
+            "share": 321,
+            "status": 1,
+            "title": "城市+越野的潮玩大玩具，还得是这台车。 #我的潮玩新旅伴 #哈弗大狗2026款 #我要见魏总 #魏建军回应近期车友见面诉求",
+        },
+        {
+            "comment": 271,
+            "like": 6709,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 2107786,
+            "share": 323,
+            "status": 1,
+            "title": "这下用的终于不是智商税了！ #bop色修美白牙膏",
+        },
+        {
+            "comment": 186,
+            "like": 18045,
+            "media_type": "4",
+            "original_status": 102,
+            "play": 2153557,
+            "share": 269,
+            "status": 1,
+            "title": "汽车刹车效果差、行驶噪音大，可以试试换轮胎！ #奥迪a6 #汽车知识 #奥迪轮胎 #换轮胎",
+        }
+    ]
+}
+博主创作能力最新视频表现接口所需字段（分情况请求后拼接）：
+情况名-全部-播放量（统计latest_star_item_info和latest_item_info中全部项，计算play的最低值、最高值、平均值）
+情况名-全部-点赞量（统计latest_star_item_info和latest_item_info中全部项，计算like的最低值、最高值、平均值）
+情况名-全部-评论量（统计latest_star_item_info和latest_item_info中全部项，计算comment的最低值、最高值、平均值）
+情况名-全部-转发量（统计latest_star_item_info和latest_item_info中全部项，计算share的最低值、最高值、平均值）
+情况名-个人视频-播放量（统计latest_item_info中全部项，计算play的最低值、最高值、平均值）
+情况名-个人视频-点赞量（统计latest_item_info中全部项，计算like的最低值、最高值、平均值）
+情况名-个人视频-评论量（统计latest_item_info中全部项，计算comment的最低值、最高值、平均值）
+情况名-个人视频-转发量（统计latest_item_info中全部项，计算share的最低值、最高值、平均值）
+情况名-星图视频-播放量（统计latest_star_item_info中全部项，计算play的最低值、最高值、平均值）
+情况名-星图视频-点赞量（统计latest_star_item_info中全部项，计算like的最低值、最高值、平均值）
+情况名-星图视频-评论量（统计latest_star_item_info中全部项，计算comment的最低值、最高值、平均值）
+情况名-星图视频-转发量（统计latest_star_item_info中全部项，计算share的最低值、最高值、平均值）
+
+博主创作能力内容类型分析接口：
+curl 'https://www.xingtu.cn/gw/api/data_sp/author_video_distribution?o_author_id=6629722292110753806&platform_source=1&platform_channel=1' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9; s_v_web_id=verify_mj5snvur_cLCiHW2s_aznE_4GNQ_AJYk_tVI4PmzXwJFo' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6629722292110753806?market_track_id=ZU9MLUVASRLH8CDLMF7U&search_session_id=7583731063903158298&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+博主创作能力内容类型分析接口返回响应：
+{
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "video_content_distribution": [
+        {
+            "cnt": 18,
+            "name": "剧情",
+            "proportion": 0.9
+        },
+        {
+            "cnt": 1,
+            "name": "二次元",
+            "proportion": 0.05
+        },
+        {
+            "cnt": 1,
+            "name": "汽车",
+            "proportion": 0.05
+        }
+    ]
+}
+博主创作能力内容类型分析接口所需字段（分情况请求后拼接）：
+创造能力-内容类型分析（取video_content_distribution中的name和proportion拼接，proportion转换为百分制，如0.9转换为90%）
+
+
+博主创作能力热词分析-评论热词接口：
+curl 'https://www.xingtu.cn/gw/api/data/get_author_hot_comment_tokens?author_id=6629722292110753806&num=10&without_emoji=true' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9; s_v_web_id=verify_mj5snvur_cLCiHW2s_aznE_4GNQ_AJYk_tVI4PmzXwJFo' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6629722292110753806?market_track_id=ZU9MLUVASRLH8CDLMF7U&search_session_id=7583731063903158298&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+博主创作能力热词分析-评论热词接口返回响应：
+{
+    "base_resp": {
+        "status_code": 0,
+        "status_message": "Success"
+    },
+    "hot_comment_tokens": [
+        {
+            "comment_token": "广告",
+            "hot_rate": 936
+        },
+        {
+            "comment_token": "游戏",
+            "hot_rate": 308
+        },
+        {
+            "comment_token": "视频",
+            "hot_rate": 301
+        },
+        {
+            "comment_token": "陈翔",
+            "hot_rate": 283
+        },
+        {
+            "comment_token": "小明",
+            "hot_rate": 277
+        },
+        {
+            "comment_token": "兄弟",
+            "hot_rate": 192
+        },
+        {
+            "comment_token": "时候",
+            "hot_rate": 163
+        },
+        {
+            "comment_token": "手机",
+            "hot_rate": 151
+        },
+        {
+            "comment_token": "老婆",
+            "hot_rate": 147
+        },
+        {
+            "comment_token": "蘑菇头",
+            "hot_rate": 146
+        }
+    ]
+}
+博主创作能力热词分析-评论热词接口所需关键词：
+创作能力-热词分析-评论热词（取hot_comment_tokens中的comment_token和hot_rate拼接）
+
+博主创作能力热词分析-内容热词接口：
+curl 'https://www.xingtu.cn/gw/api/gauthor/get_author_content_hot_keywords?author_id=6629722292110753806&keyword_type=0' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9; s_v_web_id=verify_mj5snvur_cLCiHW2s_aznE_4GNQ_AJYk_tVI4PmzXwJFo' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6629722292110753806?market_track_id=ZU9MLUVASRLH8CDLMF7U&search_session_id=7583731063903158298&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+博主创作能力热词分析-内容热词接口返回响应：
+{
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "keyword_item_distribution": {
+        "大哥": 14,
+        "手机": 5,
+        "老公": 7,
+        "老板": 9,
+        "衣服": 7
+    }
+}
+博主创作能力热词分析-内容热词接口所需关键词：
+创作能力-热词分析-内容热词（取keyword_item_distribution中的键值拼接）
+
+博主创作能力定制短剧题材分析和关键词接口：
+curl 'https://www.xingtu.cn/gw/api/aggregator/get_author_playlet_theme_distribution?star_author_id=6629722292110753806' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9; s_v_web_id=verify_mj5snvur_cLCiHW2s_aznE_4GNQ_AJYk_tVI4PmzXwJFo' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6629722292110753806?market_track_id=ZU9MLUVASRLH8CDLMF7U&search_session_id=7583731063903158298&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+博主创作能力定制短剧题材分析和关键词接口返回响应：
+{
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "content_element_distribution": {
+        "玩家提诉求": "1",
+        "确定公测日": "1",
+        "解决游戏难题": "1"
+    },
+    "content_personal_distribution": {
+        "游戏策划者": "1",
+        "游戏老玩家": "1"
+    },
+    "theme_distribution": {
+        "其他": "1",
+        "喜剧": "4",
+        "奇幻": "1",
+        "悬疑推理": "1",
+        "搞笑": "15",
+        "爱情": "3",
+        "职场": "3",
+        "都市情感": "3"
+    }
+}
+博主创作能力定制短剧题材分析和关键词接口所需关键词：
+创作能力-定制短剧题材分析（取theme_distribution中的键值拼接，值转换为百分制，如搞笑的是15，计算完为48.4%）
+创作能力-定制短剧题材关键词（content_personal_distribution中的键）
+
+博主合作行业ID查询接口：
+curl 'https://www.xingtu.cn/gw/api/ggeneric/get_category_list?platform_source=1' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9; s_v_web_id=verify_mj5snvur_cLCiHW2s_aznE_4GNQ_AJYk_tVI4PmzXwJFo' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6629722292110753806?market_track_id=ZU9MLUVASRLH8CDLMF7U&search_session_id=7583731063903158298&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+博主合作行业ID查询接口返回响应示例：
+{
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "category_list": [
+        {
+            "category_id": "1901",
+            "category_name": "3C及电器",
+            "children": [
+                {
+                    "category_id": "190101",
+                    "category_name": "消费类电子产品"
+                },
+                {
+                    "category_id": "190103",
+                    "category_name": "其他3C及电器"
+                },
+                ...
+            ]
+        },
+        {
+            "category_id": "1903",
+            "category_name": "食品饮料",
+            "children": [
+                {
+                    "category_id": "190206",
+                    "category_name": "烟"
+                },
+                {
+                    "category_id": "190215",
+                    "category_name": "烟酒电商"
+                },
+                ...
+            ]
+        },
+        ...
+    ]
+}
+
+
+博主履约能力接口：
+curl 'https://www.xingtu.cn/gw/api/aggregator/get_author_contract_base_info?o_author_id=6629722292110753806&range=30' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9; s_v_web_id=verify_mj5snvur_cLCiHW2s_aznE_4GNQ_AJYk_tVI4PmzXwJFo' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/6629722292110753806?market_track_id=ZU9MLUVASRLH8CDLMF7U&search_session_id=7583731063903158298&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+
+此接口有多种情况：
+当range=30，情况名为“履约能力-近7天”
+当range=90，情况名为“履约能力-近90天”
+
+博主履约能力接口返回响应：
+{
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "credit_score": "100",
+    "industry_order_distribution": "[{\"key\":\"1913\",\"rate\":\"0.1333\",\"value\":\"2\"},{\"key\":\"1903\",\"rate\":\"0.0667\",\"value\":\"1\"},{\"key\":\"1933\",\"rate\":\"0.0667\",\"value\":\"1\"},{\"key\":\"1909\",\"rate\":\"0.0667\",\"value\":\"1\"},{\"key\":\"1905\",\"rate\":\"0.0667\",\"value\":\"1\"},{\"key\":\"1916\",\"rate\":\"0.4\",\"value\":\"6\"},{\"key\":\"1930\",\"rate\":\"0.1333\",\"value\":\"2\"},{\"key\":\"1901\",\"rate\":\"0.0667\",\"value\":\"1\"}]",
+    "industry_vv_distribution": "[{\"key\":\"1909\",\"rate\":\"0.064\",\"value\":\"28784933\"},{\"key\":\"1905\",\"rate\":\"0.1124\",\"value\":\"50568972\"},{\"key\":\"1916\",\"rate\":\"0.2669\",\"value\":\"120051257\"},{\"key\":\"1933\",\"rate\":\"0.0226\",\"value\":\"10149541\"},{\"key\":\"1903\",\"rate\":\"0.0113\",\"value\":\"5103380\"},{\"key\":\"1901\",\"rate\":\"0.15\",\"value\":\"67458126\"},{\"key\":\"1913\",\"rate\":\"0.3004\",\"value\":\"135124337\"},{\"key\":\"1930\",\"rate\":\"0.0725\",\"value\":\"32616605\"}]",
+    "max_process_order_cnt": "11",
+    "message_reply_rate": "0.0362",
+    "modify_time": "1765686860",
+    "new_credit_score": 73,
+    "order_cnt": "15",
+    "process_order_cnt": "7"
+}
+博主履约能力接口所需关键词：
+情况名-48h消息回复率（message_reply_rate，百分制表示）
+情况名-好评率（暂时为空值，接口未返回）
+情况名-信用分（new_credit_score）
+情况名-合作行业数（industry_order_distribution，转换为列表后，列表的长度）
+情况名-合作商单数（order_cnt）
+情况名-进行中任务数（process_order_cnt）
+情况名-最大同时进行任务数（max_process_order_cnt）
+情况名-合作行业商单分析（industry_order_distribution，转换为列表，遍历列表中的key（行业ID），使用博主合作行业ID查询接口，查询到key对应的行业名称，行业名称和rate(百分制表示)拼接）
+情况名-合作行业播放量分析（industry_vv_distribution，转换为列表，遍历列表中的key（行业ID），使用博主合作行业ID查询接口，查询到key对应的行业名称，行业名称和rate(百分制表示)拼接）
+
+
+博主连接用户数接口：
+curl 'https://www.xingtu.cn/gw/api/data_sp/author_link_struct?o_author_id=7396939888582000681&platform_source=1&platform_channel=1&industry_id=0' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9; s_v_web_id=verify_mj5snvur_cLCiHW2s_aznE_4GNQ_AJYk_tVI4PmzXwJFo' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/7396939888582000681?market_track_id=ZU9MLUVASRLH8CDLMF7U&search_session_id=7583731063903158298&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+博主连接用户数接口返回响应：
+{
+    "author_link_type": "传播",
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "link_struct": {
+        "1": {
+            "proportion": 0.7712782359499942,
+            "same_industry_median": 1158348,
+            "value": 35137391
+        },
+        "2": {
+            "proportion": 0.22390622913344296,
+            "same_industry_median": 175729,
+            "value": 10200574
+        },
+        "3": {
+            "proportion": 0.004811671653933851,
+            "same_industry_median": 92184,
+            "value": 219207
+        },
+        "4": {
+            "proportion": 0.000003863262628895782,
+            "same_industry_median": 2,
+            "value": 176
+        },
+        "5": {
+            "rank_percent": 0.0035,
+            "relative_ratio": 42.6562,
+            "value": 45557348
+        }
+    }
+}
+博主连接用户数接口所需关键词：
+连接用户-连接用户分布（"5"中的value为总数，"1"为“了解”，"2"为“兴趣”，"3"为“喜欢”，"4"为“追随”，用“、”拼接展示）
+
+
+博主连接用户-追随用户画像接口：
+curl 'https://www.xingtu.cn/gw/api/data_sp/author_audience_distribution?o_author_id=7396939888582000681&platform_source=1&platform_channel=1&link_type=5' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9; s_v_web_id=verify_mj5snvur_cLCiHW2s_aznE_4GNQ_AJYk_tVI4PmzXwJFo' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/7396939888582000681?market_track_id=ZU9MLUVASRLH8CDLMF7U&search_session_id=7583731063903158298&possessStarId' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+博主连接用户-追随用户画像接口返回响应：
+{
+    "base_resp": {
+        "status_code": 0,
+        "status_message": ""
+    },
+    "distributions": [
+        {
+            "description": "男性居多,占比91%",
+            "distribution_list": [
+                {
+                    "distribution_key": "female",
+                    "distribution_value": "81765"
+                },
+                {
+                    "distribution_key": "male",
+                    "distribution_value": "885823"
+                }
+            ],
+            "image": [
+                "男性居多"
+            ],
+            "origin_type": 0,
+            "type": 1,
+            "type_display": "性别分布"
+        },
+        {
+            "description": "分布最多的1个城市深圳(13%)",
+            "distribution_list": [
+                {
+                    "distribution_key": "武汉",
+                    "distribution_value": "17191"
+                },
+                {
+                    "distribution_key": "杭州",
+                    "distribution_value": "17263"
+                },
+                {
+                    "distribution_key": "郑州",
+                    "distribution_value": "17935"
+                },
+                {
+                    "distribution_key": "重庆",
+                    "distribution_value": "22268"
+                },
+                {
+                    "distribution_key": "成都",
+                    "distribution_value": "24277"
+                },
+                {
+                    "distribution_key": "上海",
+                    "distribution_value": "24289"
+                },
+                {
+                    "distribution_key": "北京",
+                    "distribution_value": "24515"
+                },
+                {
+                    "distribution_key": "深圳",
+                    "distribution_value": "31856"
+                },
+                {
+                    "distribution_key": "广州",
+                    "distribution_value": "25896"
+                },
+                {
+                    "distribution_key": "西安",
+                    "distribution_value": "25606"
+                }
+            ],
+            "image": [
+                "深圳居多"
+            ],
+            "origin_type": 8,
+            "type": 256,
+            "type_display": "城市分布"
+        },
+        {
+            "description": "分布最多的3个省份广东(14%),江苏(7%),浙江(6%)",
+            "distribution_list": [
+                {
+                    "distribution_key": "贵州",
+                    "distribution_value": "18452"
+                },
+                {
+                    "distribution_key": "天津",
+                    "distribution_value": "11322"
+                },
+                {
+                    "distribution_key": "福建",
+                    "distribution_value": "28530"
+                },
+                {
+                    "distribution_key": "河北",
+                    "distribution_value": "35708"
+                },
+                {
+                    "distribution_key": "山东",
+                    "distribution_value": "58479"
+                },
+                {
+                    "distribution_key": "黑龙江",
+                    "distribution_value": "9972"
+                },
+                {
+                    "distribution_key": "北京",
+                    "distribution_value": "24515"
+                },
+                {
+                    "distribution_key": "广东",
+                    "distribution_value": "139120"
+                },
+                {
+                    "distribution_key": "安徽",
+                    "distribution_value": "41284"
+                },
+                {
+                    "distribution_key": "湖南",
+                    "distribution_value": "34985"
+                },
+                {
+                    "distribution_key": "江西",
+                    "distribution_value": "25716"
+                },
+                {
+                    "distribution_key": "青海",
+                    "distribution_value": "2327"
+                },
+                {
+                    "distribution_key": "内蒙古",
+                    "distribution_value": "11592"
+                },
+                {
+                    "distribution_key": "辽宁",
+                    "distribution_value": "17506"
+                },
+                {
+                    "distribution_key": "吉林",
+                    "distribution_value": "9706"
+                },
+                {
+                    "distribution_key": "台湾",
+                    "distribution_value": "403"
+                },
+                {
+                    "distribution_key": "上海",
+                    "distribution_value": "24289"
+                },
+                {
+                    "distribution_key": "江苏",
+                    "distribution_value": "69696"
+                },
+                {
+                    "distribution_key": "云南",
+                    "distribution_value": "18836"
+                },
+                {
+                    "distribution_key": "陕西",
+                    "distribution_value": "43424"
+                },
+                {
+                    "distribution_key": "重庆",
+                    "distribution_value": "22268"
+                },
+                {
+                    "distribution_key": "湖北",
+                    "distribution_value": "40355"
+                },
+                {
+                    "distribution_key": "河南",
+                    "distribution_value": "62072"
+                },
+                {
+                    "distribution_key": "四川",
+                    "distribution_value": "51001"
+                },
+                {
+                    "distribution_key": "广西",
+                    "distribution_value": "26408"
+                },
+                {
+                    "distribution_key": "新疆",
+                    "distribution_value": "15433"
+                },
+                {
+                    "distribution_key": "海南",
+                    "distribution_value": "8688"
+                },
+                {
+                    "distribution_key": "澳门",
+                    "distribution_value": "231"
+                },
+                {
+                    "distribution_key": "山西",
+                    "distribution_value": "21108"
+                },
+                {
+                    "distribution_key": "宁夏",
+                    "distribution_value": "4635"
+                },
+                {
+                    "distribution_key": "浙江",
+                    "distribution_value": "65871"
+                },
+                {
+                    "distribution_key": "西藏",
+                    "distribution_value": "1847"
+                },
+                {
+                    "distribution_key": "甘肃",
+                    "distribution_value": "9915"
+                },
+                {
+                    "distribution_key": "香港",
+                    "distribution_value": "909"
+                }
+            ],
+            "image": [
+                "广东,江苏,浙江居多"
+            ],
+            "origin_type": 2,
+            "type": 4,
+            "type_display": "省份分布"
+        },
+        {
+            "description": "分布最多的3个兴趣随拍(47%),社会时政(16%),汽车(9%)",
+            "distribution_list": [
+                {
+                    "distribution_key": "随拍",
+                    "distribution_value": "364307"
+                },
+                {
+                    "distribution_key": "社会时政",
+                    "distribution_value": "124756"
+                },
+                {
+                    "distribution_key": "汽车",
+                    "distribution_value": "74495"
+                },
+                {
+                    "distribution_key": "体育",
+                    "distribution_value": "54783"
+                },
+                {
+                    "distribution_key": "二次元",
+                    "distribution_value": "41007"
+                },
+                {
+                    "distribution_key": "游戏",
+                    "distribution_value": "38044"
+                },
+                {
+                    "distribution_key": "亲子",
+                    "distribution_value": "36788"
+                },
+                {
+                    "distribution_key": "美食",
+                    "distribution_value": "34887"
+                }
+            ],
+            "image": [
+                "随拍,社会时政,汽车居多"
+            ],
+            "origin_type": 6,
+            "type": 64,
+            "type_display": "兴趣分布"
+        },
+        {
+            "description": "新锐白领居多,占比36%",
+            "distribution_list": [
+                {
+                    "distribution_key": "小镇中老年",
+                    "distribution_value": "63773"
+                },
+                {
+                    "distribution_key": "精致妈妈",
+                    "distribution_value": "7754"
+                },
+                {
+                    "distribution_key": "资深中产",
+                    "distribution_value": "63527"
+                },
+                {
+                    "distribution_key": "Z世代",
+                    "distribution_value": "104725"
+                },
+                {
+                    "distribution_key": "都市蓝领",
+                    "distribution_value": "119371"
+                },
+                {
+                    "distribution_key": "都市银发",
+                    "distribution_value": "78092"
+                },
+                {
+                    "distribution_key": "新锐白领",
+                    "distribution_value": "352905"
+                },
+                {
+                    "distribution_key": "小镇青年",
+                    "distribution_value": "164829"
+                }
+            ],
+            "image": [
+                "新锐白领居多"
+            ],
+            "origin_type": 10,
+            "type": 1024,
+            "type_display": "八大人群分布"
+        },
+        {
+            "description": "一线居多,占比35%",
+            "distribution_list": [
+                {
+                    "distribution_key": "五线",
+                    "distribution_value": "90577"
+                },
+                {
+                    "distribution_key": "四线",
+                    "distribution_value": "142136"
+                },
+                {
+                    "distribution_key": "二线",
+                    "distribution_value": "184213"
+                },
+                {
+                    "distribution_key": "三线",
+                    "distribution_value": "199368"
+                },
+                {
+                    "distribution_key": "一线",
+                    "distribution_value": "340313"
+                }
+            ],
+            "image": [
+                "一线居多"
+            ],
+            "origin_type": 5,
+            "type": 32,
+            "type_display": "城市等级分布"
+        },
+        {
+            "description": "31到40岁居多,占比33%",
+            "distribution_list": [
+                {
+                    "distribution_key": "41-50",
+                    "distribution_value": "83233"
+                },
+                {
+                    "distribution_key": "50+",
+                    "distribution_value": "89796"
+                },
+                {
+                    "distribution_key": "18-23",
+                    "distribution_value": "173302"
+                },
+                {
+                    "distribution_key": "24-30",
+                    "distribution_value": "271056"
+                },
+                {
+                    "distribution_key": "31-40",
+                    "distribution_value": "310535"
+                }
+            ],
+            "image": [
+                "31到40岁居多"
+            ],
+            "origin_type": 1,
+            "type": 2,
+            "type_display": "年龄分布"
+        },
+        {
+            "description": "苹果手机占比25%, 消费能力较好",
+            "distribution_list": [
+                {
+                    "distribution_key": "oppo",
+                    "distribution_value": "66417"
+                },
+                {
+                    "distribution_key": "华为",
+                    "distribution_value": "205974"
+                },
+                {
+                    "distribution_key": "其他",
+                    "distribution_value": "114310"
+                },
+                {
+                    "distribution_key": "iPhone",
+                    "distribution_value": "244971"
+                },
+                {
+                    "distribution_key": "红米",
+                    "distribution_value": "59720"
+                },
+                {
+                    "distribution_key": "vivo",
+                    "distribution_value": "75235"
+                },
+                {
+                    "distribution_key": "荣耀",
+                    "distribution_value": "98582"
+                },
+                {
+                    "distribution_key": "小米",
+                    "distribution_value": "102593"
+                }
+            ],
+            "image": [
+                "苹果手机较多"
+            ],
+            "origin_type": 3,
+            "type": 8,
+            "type_display": "设备品牌分布"
+        }
+    ],
+    "last_update_time": "1765730933"
+}
+博主连接用户-追随用户画像接口所需关键词：
+连接用户-追随用户画像-性别分布（distributions中type_display为"性别分布"的distribution_list，distribution_key中值转换为男性、女性，distribution_value转换为百分比，如男性“885823”，转换为89.2%，拼接）
+连接用户-追随用户画像-年龄分布（distributions中type_display为"年龄分布"的distribution_list，distribution_key和distribution_value转换为百分比拼接）
+连接用户-追随用户画像-全国省份分布（distributions中type_display为"省份分布"的distribution_list，distribution_key和distribution_value转换为百分比拼接）
+连接用户-追随用户画像-地域占比 TOP10-省份（distributions中type_display为"省份分布"的distribution_list的distribution_value前10的项，distribution_key和distribution_value转换为百分比拼接）
+连接用户-追随用户画像-地域占比 TOP10-城市（distributions中type_display为"城市分布"的distribution_list，distribution_key和distribution_value转换为百分比拼接）
+连接用户-追随用户画像-城市等级分布（distributions中type_display为"城市等级分布"的distribution_list，distribution_key和distribution_value转换为百分比拼接）
+连接用户-追随用户画像-兴趣分布（distributions中type_display为"兴趣分布"的distribution_list，distribution_key和distribution_value转换为百分比拼接）
+连接用户-追随用户画像-八大人群占比（distributions中type_display为"八大人群分布"的distribution_list，distribution_key和distribution_value转换为百分比拼接）
+连接用户-追随用户画像-设备分布（distributions中type_display为"设备品牌分布"的distribution_list，distribution_key和distribution_value转换为百分比拼接）

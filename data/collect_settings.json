@@ -1,0 +1,23 @@
+{
+  "save_mode": "local",
+  "local": {
+    "filename": "collected_data.xlsx",
+    "path": "C:\\Users\\LTX-SXY\\Desktop"
+  },
+  "collect_fields": [
+    "spread-info",
+    "effect-estimate",
+    "seed-value",
+    "convert-ability",
+    "ecom-stat",
+    "latest-videos",
+    "content-type",
+    "hot-words",
+    "playlet-theme",
+    "contract-info",
+    "link-user",
+    "audience-profile"
+  ],
+  "account_mode": "multi",
+  "single_account_cookies": ""
+}

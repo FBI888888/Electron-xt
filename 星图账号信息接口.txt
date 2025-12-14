@@ -1,0 +1,35 @@
+星图账号个人信息接口：
+curl 'https://www.xingtu.cn/gw/api/demander/grade_info' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'agw-js-conv: str' \
+  -b 'Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765720089; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765720089; HMACCOUNT=75C7C364454927F0; passport_csrf_token=99e79c86ce95d34ead7e2bfae12bdec6; passport_csrf_token_default=99e79c86ce95d34ead7e2bfae12bdec6; passport_auth_status=7441a467100d95454cd607adb59f4bc8%2C; passport_auth_status_ss=7441a467100d95454cd607adb59f4bc8%2C; sid_guard=4746dd224119fe8321bc64d873ed7428%7C1765720117%7C5184002%7CThu%2C+12-Feb-2026+13%3A48%3A39+GMT; uid_tt=806811c2296f8782521697670e3b5f05; uid_tt_ss=806811c2296f8782521697670e3b5f05; sid_tt=4746dd224119fe8321bc64d873ed7428; sessionid=4746dd224119fe8321bc64d873ed7428; sessionid_ss=4746dd224119fe8321bc64d873ed7428; session_tlb_tag=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; session_tlb_tag_bk=sttt%7C17%7CR0bdIkEZ_oMhvGTYc-10KP________-1lIwsBkgbjIJsrL8TEmD5HAtTqZ-IxaUvt-NKudQADFk%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; ssid_ucp_v1=1.0.0-KDU2MTJmZjAyMWQ4NTA1Y2Y5M2Q3M2VmNDI2MWFmNzRiZGRiNDQyODAKFwiKuIDf2s3zAxC1gPvJBhimDDgBQOsHGgJscSIgNDc0NmRkMjI0MTE5ZmU4MzIxYmM2NGQ4NzNlZDc0Mjg; star_sessionid=4746dd224119fe8321bc64d873ed7428; possess_scene_star_id=1814327936588138; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7583710129520363058; gd_random=eyJtYXRjaCI6dHJ1ZSwicGVyY2VudCI6MC4zNjc4NzI5OTg1MTA0NTMyfQ==.LoGA3p7H79d9b0nZD+xnFxWgfaYO/xIRt40ZVAcQ3yQ=; auth_token=846ec3a3ccc54da5962a3e4e5f8bd1c5; auth_token_ss=846ec3a3ccc54da5962a3e4e5f8bd1c5; ttcid=8a604b03ee3346acbd26d888af434c8633; tt_scid=RvEx1gj2bev0u0A8lB9Hf5q5VNW2nbfJSgRjlro9X-DopjPROH0wcKn6OyrYs.-Id9f9' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://www.xingtu.cn/ad/user-center/user/equities' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="143", "Chromium";v="143", "Not A(Brand";v="24"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0' \
+  -H 'x-login-source: 1'
+星图账号个人信息接口返回响应：
+{
+    "badge_tags": [],
+    "base_resp": {
+        "status_code": 0,
+        "status_message": "Success"
+    },
+    "customer_name": "东风日产汽车销售有限公司",
+    "end_time": "1767110400",
+    "grade": 3,
+    "grade_tag": "黄金",
+    "is_svip": false,
+    "is_svip_child": false,
+    "name": "东风日产-2024",
+    "subject_type": 1
+}
+星图账号个人信息接口所需字段：
+星图昵称-name
+等级-grade_tag

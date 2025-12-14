@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星图达人采集管理系统 V1.0.0</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.263.1/font/lucide.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边导航栏 -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>星图采集</h2>
+                <span style="font-size: 11px; color: #888; margin-top: 2px;">V1.0.0</span>
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item active" data-page="account">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span>账号管理</span>
+                </li>
+                <li class="nav-item" data-page="settings">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    <span>采集设置</span>
+                </li>
+                <li class="nav-item" data-page="collect">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>采集管理</span>
+                </li>
+                <li class="nav-item" data-page="blogger-list">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <line x1="19" y1="8" x2="19" y2="14"></line>
+                        <line x1="22" y1="11" x2="16" y2="11"></line>
+                    </svg>
+                    <span>达人列表</span>
+                </li>
+            </ul>
+            <div class="nav-bottom">
+                <li class="nav-item" data-page="license">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <span>授权信息</span>
+                </li>
+                <li class="nav-item" data-page="about">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <span>免责声明</span>
+                </li>
+            </div>
+        </nav>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <!-- 账号管理页面 -->
+            <div class="page active" id="page-account">
+                <div class="page-header">
+                    <h1>账号管理</h1>
+                </div>
+                <div class="page-body">
+                    <!-- 顶部操作区域 -->
+                    <div class="toolbar">
+                        <input type="text" class="input" id="remark-input" placeholder="备注名" style="width: 150px;">
+                        <input type="text" class="input" id="cookies-input" placeholder="请输入Cookies" style="width: 280px;">
+                        <button class="btn btn-primary" id="xingtu-login-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                <polyline points="10 17 15 12 10 7"></polyline>
+                                <line x1="15" y1="12" x2="3" y2="12"></line>
+                            </svg>
+                            星图登录
+                        </button>
+                        <button class="btn btn-secondary" id="fangzhou-login-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                <polyline points="10 17 15 12 10 7"></polyline>
+                                <line x1="15" y1="12" x2="3" y2="12"></line>
+                            </svg>
+                            方舟登录
+                        </button>
+                        <button class="btn btn-secondary" id="add-account-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            添加账号
+                        </button>
+                        <button class="btn btn-secondary" id="check-all-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                            </svg>
+                            检查全部账号
+                        </button>
+                    </div>
+
+                    <!-- 账号表格 -->
+                    <div class="table-container">
+                        <table class="data-table" id="account-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 120px;">备注名</th>
+                                    <th style="width: 150px;">星图昵称</th>
+                                    <th style="width: 60px;">等级</th>
+                                    <th style="width: 130px;">最大采集次数</th>
+                                    <th style="width: 100px;">已采集次数</th>
+                                    <th style="width: 80px;">账号状态</th>
+                                    <th>Cookies</th>
+                                </tr>
+                            </thead>
+                            <tbody id="account-tbody">
+                                <!-- 数据由JS动态填充 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 采集设置页面 -->
+            <div class="page" id="page-settings">
+                <div class="page-header">
+                    <h1>采集设置</h1>
+                </div>
+                <div class="page-body page-scroll">
+                    <!-- 本地保存配置 -->
+                    <div class="card">
+                        <div class="card-header">本地保存配置</div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <label class="form-label">保存文件名称:</label>
+                                <input type="text" class="input" id="filename-input" placeholder="例如: collected_data.xlsx">
+                            </div>
+                            <div class="form-row">
+                                <label class="form-label">保存路径:</label>
+                                <input type="text" class="input" id="path-input" placeholder="点击选择按钮选择保存路径" readonly style="flex: 1;">
+                                <button class="btn btn-secondary" id="select-path-btn">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                                    </svg>
+                                    选择路径
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 数据字段选择 -->
+                    <div class="card">
+                        <div class="card-header">采集字段选择</div>
+                        <div class="card-body">
+                            <div class="toolbar" style="margin-bottom: 15px;">
+                                <button class="btn btn-secondary" id="select-all-btn">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    全选
+                                </button>
+                                <button class="btn btn-secondary" id="deselect-all-btn">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+                                    取消全选
+                                </button>
+                            </div>
+                            
+                            <!-- 必采字段（不可取消） -->
+                            <div class="field-group">
+                                <h4>必采字段（始终采集）：</h4>
+                                <div class="checkbox-grid">
+                                    <label class="checkbox-item" style="opacity: 0.7;">
+                                        <input type="checkbox" checked disabled>
+                                        <span>博主个人信息</span>
+                                    </label>
+                                    <label class="checkbox-item" style="opacity: 0.7;">
+                                        <input type="checkbox" checked disabled>
+                                        <span>博主商业卡片信息</span>
+                                    </label>
+                                    <label class="checkbox-item" style="opacity: 0.7;">
+                                        <input type="checkbox" checked disabled>
+                                        <span>月连接用户数</span>
+                                    </label>
+                                    <label class="checkbox-item" style="opacity: 0.7;">
+                                        <input type="checkbox" checked disabled>
+                                        <span>月涨粉率</span>
+                                    </label>
+                                    <label class="checkbox-item" style="opacity: 0.7;">
+                                        <input type="checkbox" checked disabled>
+                                        <span>合作报价</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 商业能力 -->
+                            <div class="field-group">
+                                <h4>商业能力（可选）：</h4>
+                                <div class="checkbox-grid">
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="collect-field" value="spread-info" checked>
+                                        <span>传播价值数据</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="collect-field" value="effect-estimate" checked>
+                                        <span>效果预估</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="collect-field" value="seed-value" checked>
+                                        <span>种草价值</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="collect-field" value="convert-ability" checked>
+                                        <span>转化价值-星图短视频</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="collect-field" value="ecom-stat" checked>
+                                        <span>转化价值-全部带货数据</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 创作能力 -->
+                            <div class="field-group">
+                                <h4>创作能力（可选）：</h4>
+                                <div class="checkbox-grid">
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="collect-field" value="latest-videos" checked>
+                                        <span>最新视频表现</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="collect-field" value="content-type" checked>
+                                        <span>内容类型分析</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="collect-field" value="hot-words" checked>
+                                        <span>热词分析</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="collect-field" value="playlet-theme" checked>
+                                        <span>定制短剧题材分析</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 履约与连接用户 -->
+                            <div class="field-group">
+                                <h4>履约与用户分析（可选）：</h4>
+                                <div class="checkbox-grid">
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="collect-field" value="contract-info" checked>
+                                        <span>履约能力</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="collect-field" value="link-user" checked>
+                                        <span>连接用户分布</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="collect-field" value="audience-profile" checked>
+                                        <span>用户画像</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 采集账号设置 -->
+                    <div class="card">
+                        <div class="card-header">采集账号设置</div>
+                        <div class="card-body">
+                            <div class="form-row" style="align-items: flex-start;">
+                                <label class="form-label" style="padding-top: 8px;">账号模式:</label>
+                                <div class="radio-group" style="display: flex; flex-direction: column; gap: 12px;">
+                                    <label class="radio-item" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                        <input type="radio" name="account-mode" value="multi" checked style="width: 16px; height: 16px;">
+                                        <span style="font-weight: 500;">多账户轮询</span>
+                                        <span style="color: #666; font-size: 12px;">（推荐：自动轮换使用所有可用账号，均衡分配采集次数）</span>
+                                    </label>
+                                    <label class="radio-item" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                        <input type="radio" name="account-mode" value="single" style="width: 16px; height: 16px;">
+                                        <span style="font-weight: 500;">单账号采集</span>
+                                        <span style="color: #666; font-size: 12px;">（使用指定账号进行采集，达到上限后停止）</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <!-- 单账号选择（仅在单账号模式下显示） -->
+                            <div class="form-row" id="single-account-row" style="display: none; margin-top: 15px;">
+                                <label class="form-label">选择账号:</label>
+                                <select id="single-account-select" class="form-input" style="flex: 1; max-width: 300px;">
+                                    <option value="">-- 请选择账号 --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 采集管理页面 -->
+            <div class="page" id="page-collect">
+                <div class="page-header">
+                    <h1>采集管理</h1>
+                </div>
+                <div class="page-body">
+                    <!-- 顶部按钮区域 -->
+                    <div class="toolbar-group">
+                        <div class="toolbar">
+                            <button class="btn btn-secondary" id="excel-import-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                Excel导入
+                            </button>
+                            <button class="btn btn-secondary" id="text-import-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                文本导入
+                            </button>
+                            <button class="btn btn-secondary" id="txt-import-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                                TXT文件导入
+                            </button>
+                            <div class="toolbar-divider"></div>
+                            <button class="btn btn-primary" id="start-collect-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                </svg>
+                                开始采集
+                            </button>
+                            <button class="btn btn-secondary" id="pause-collect-btn" disabled>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <rect x="6" y="4" width="4" height="16"></rect>
+                                    <rect x="14" y="4" width="4" height="16"></rect>
+                                </svg>
+                                暂停采集
+                            </button>
+                            <button class="btn btn-secondary" id="stop-collect-btn" disabled>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                                结束采集
+                            </button>
+                        </div>
+                        <div class="toolbar">
+                            <button class="btn btn-secondary" id="clear-list-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                                清空列表
+                            </button>
+                            <button class="btn btn-secondary" id="save-excel-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
+                                </svg>
+                                保存Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 采集表格 -->
+                    <div class="table-container">
+                        <table class="data-table" id="collect-table">
+                            <thead>
+                                <tr>
+                                    <th>星图主页or抖音主页</th>
+                                    <th style="width: 120px;">达人ID</th>
+                                    <th style="width: 120px;">达人昵称</th>
+                                    <th style="width: 120px;">粉丝量级</th>
+                                    <th style="width: 120px;">采集状态</th>
+                                    <th style="width: 160px;">采集时间</th>
+                                </tr>
+                            </thead>
+                            <tbody id="collect-tbody">
+                                <!-- 数据由JS动态填充 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 达人列表页面 -->
+            <div class="page" id="page-blogger-list">
+                <div class="page-header">
+                    <h1>达人列表</h1>
+                </div>
+                <div class="page-body">
+                    <!-- 顶部操作区域 -->
+                    <div class="toolbar">
+                        <button class="btn btn-primary" id="open-browser-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
+                            打开达人广场
+                        </button>
+                        <span style="margin-left: 10px; color: #666;">获取页数:</span>
+                        <input type="number" class="input" id="max-pages-input" value="500" min="1" max="500" style="width: 80px;">
+                        <button class="btn btn-primary" id="start-fetch-btn" disabled>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            开始获取
+                        </button>
+                        <button class="btn btn-secondary" id="stop-fetch-btn" disabled>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <rect x="6" y="6" width="12" height="12"></rect>
+                            </svg>
+                            停止获取
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button class="btn btn-secondary" id="clear-blogger-list-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                            清空列表
+                        </button>
+                        <button class="btn btn-secondary" id="export-blogger-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            导出Excel
+                        </button>
+                        <span class="fetch-status" id="fetch-status"></span>
+                    </div>
+
+                    <!-- 达人列表表格 -->
+                    <div class="table-container" style="flex: 1; overflow: auto;">
+                        <table class="table" style="min-width: 1800px; width: max-content; text-align: center;">
+                            <thead>
+                                <tr>
+                                    <th style="min-width: 50px;">序号</th>
+                                    <th style="min-width: 180px; max-width: 200px;">星图主页</th>
+                                    <th style="min-width: 180px; max-width: 200px;">抖音主页</th>
+                                    <th style="min-width: 120px;">达人昵称</th>
+                                    <th style="min-width: 80px;">归属地</th>
+                                    <th style="min-width: 180px;">个人标签</th>
+                                    <th style="min-width: 180px;">内容标签</th>
+                                    <th style="min-width: 60px;">性别</th>
+                                    <th style="min-width: 100px;">粉丝数</th>
+                                    <th style="min-width: 100px;">粉丝数-万</th>
+                                    <th style="min-width: 130px;">播放中位数</th>
+                                    <th style="min-width: 130px;">互动中位数</th>
+                                    <th style="min-width: 130px;">完播率</th>
+                                    <th style="min-width: 100px;">视频报价</th>
+                                    <th style="min-width: 100px;">直播报价</th>
+                                </tr>
+                            </thead>
+                            <tbody id="blogger-list-tbody">
+                                <!-- 数据由JS动态填充 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 授权信息页面 -->
+            <div class="page" id="page-license">
+                <div class="page-header">
+                    <h1>授权信息</h1>
+                </div>
+                <div class="page-body page-scroll">
+                    <div class="card" style="max-width: 600px;">
+                        <div class="card-header">软件授权详情</div>
+                        <div class="card-body">
+                            <div class="license-info-grid">
+                                <div class="license-info-item">
+                                    <span class="license-label">机器码</span>
+                                    <div class="license-value-wrap">
+                                        <code class="license-machine-code" id="license-machine-code">获取中...</code>
+                                        <button class="btn btn-sm" id="copy-machine-code-btn" title="复制机器码">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="license-info-item">
+                                    <span class="license-label">授权码</span>
+                                    <div class="license-value-wrap">
+                                        <code class="license-machine-code" id="license-key">未激活</code>
+                                        <button class="btn btn-sm" id="copy-license-key-btn" title="复制授权码">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="license-info-item">
+                                    <span class="license-label">会员身份</span>
+                                    <span class="license-value license-level" id="license-level">-</span>
+                                </div>
+                                <div class="license-info-item">
+                                    <span class="license-label">到期时间</span>
+                                    <span class="license-value" id="license-expire">-</span>
+                                </div>
+                                <div class="license-info-item">
+                                    <span class="license-label">剩余天数</span>
+                                    <span class="license-value" id="license-days">-</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 授权操作按钮 -->
+                            <div class="license-actions" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color); display: flex; gap: 12px;">
+                                <button class="btn btn-secondary" id="change-license-btn">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                        <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+                                    </svg>
+                                    更换授权码
+                                </button>
+                                <button class="btn btn-danger" id="unbind-license-btn">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                                        <line x1="12" y1="2" x2="12" y2="12"></line>
+                                    </svg>
+                                    解绑授权码
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 免责声明页面 -->
+            <div class="page" id="page-about">
+                <div class="page-header">
+                    <h1>软件使用免责声明</h1>
+                </div>
+                <div class="page-body page-scroll">
+                    <div class="disclaimer-content">
+                        <div class="disclaimer-item">
+                            <p>本软件仅提供公开信息采集工具功能，仅支持采集抖音星图平台已公开的达人主页信息，不具备获取非公开数据的能力。</p>
+                        </div>
+                        <div class="disclaimer-item">
+                            <p>您承诺使用本软件时严格遵守《中华人民共和国网络安全法》《数据安全法》《个人信息保护法》等相关法律法规，以及抖音星图平台的用户协议、社区规范等规则，不得用于任何违法违规用途。</p>
+                        </div>
+                        <div class="disclaimer-item">
+                            <p><strong>禁止利用本软件实施以下行为：</strong>采集非公开信息、过度爬取导致平台服务器负载异常、侵害他人隐私权/知识产权/商业秘密等合法权益、用于 spam 营销、诈骗等违法活动。</p>
+                        </div>
+                        <div class="disclaimer-item">
+                            <p>本软件仅为工具提供者，不对您使用软件的行为及结果承担责任。如因您违规使用软件导致的任何法律纠纷、行政处罚、第三方索赔等，均由您自行承担全部责任，与软件开发者无关。</p>
+                        </div>
+                        <div class="disclaimer-item">
+                            <p>如发现软件存在异常或有违规使用需求，开发者有权暂停或终止您的使用权限，且不承担任何赔偿责任。</p>
+                        </div>
+                        <div class="disclaimer-item disclaimer-warning">
+                            <p><strong>您使用本软件即表示已充分阅读、理解并同意本声明全部条款，若不同意请立即停止使用。</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 消息提示 -->
+    <div id="toast-container"></div>
+
+    <!-- 模态框容器 -->
+    <div id="modal-container"></div>
+
+    <script src="renderer/app.js"></script>
+</body>
+</html>
