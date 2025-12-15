@@ -5,6 +5,11 @@
 
 const https = require('https');
 
+const httpsAgent = new https.Agent({
+    keepAlive: true,
+    maxSockets: 20
+});
+
 // ==================== HTTP 请求函数 ====================
 
 function makeRequest(options, postData = null) {
@@ -20,6 +25,11 @@ function makeRequest(options, postData = null) {
                 }
                 resolve({ statusCode: res.statusCode, data });
             });
+
+            res.on('aborted', () => {
+                console.error('[xingtuApi] 响应被中断(aborted)');
+                resolve({ statusCode: 0, error: '响应被中断' });
+            });
         });
         
         req.on('error', (e) => {
@@ -32,6 +42,10 @@ function makeRequest(options, postData = null) {
             req.destroy();
             resolve({ statusCode: 0, error: '请求超时' });
         });
+
+        if (options && options.timeout) {
+            req.setTimeout(options.timeout);
+        }
         
         if (postData) {
             req.write(postData);
@@ -46,6 +60,7 @@ function getRequestOptions(path, cookies) {
         port: 443,
         path: path,
         method: 'GET',
+        agent: httpsAgent,
         headers: {
             'accept': 'application/json, text/plain, */*',
             'accept-language': 'zh-CN,zh;q=0.9',
@@ -57,7 +72,7 @@ function getRequestOptions(path, cookies) {
             'Connection': 'keep-alive',
             'x-login-source': '1'
         },
-        timeout: 15000
+        timeout: 30000
     };
 }
 
@@ -77,7 +92,8 @@ async function withRetry(apiCall, apiName, maxRetries = 3) {
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
             if (attempt > 0) {
-                const delay = 500 * attempt;
+                const base = 800;
+                const delay = Math.min(15000, base * Math.pow(2, attempt - 1)) + Math.floor(Math.random() * 200);
                 console.log(`[${apiName}] 重试 ${attempt}/${maxRetries}，等待 ${delay}ms...`);
                 await sleep(delay);
             }
@@ -109,6 +125,7 @@ function getPostRequestOptions(path, cookies, postData) {
         port: 443,
         path: path,
         method: 'POST',
+        agent: httpsAgent,
         headers: {
             'accept': 'application/json, text/plain, */*',
             'accept-language': 'zh-CN,zh;q=0.9',
@@ -123,7 +140,7 @@ function getPostRequestOptions(path, cookies, postData) {
             'x-login-source': '1',
             'Content-Length': Buffer.byteLength(dataStr)
         },
-        timeout: 15000
+        timeout: 30000
     };
 }
 
@@ -131,57 +148,65 @@ function getPostRequestOptions(path, cookies, postData) {
  * 通过抖音主页URL搜索获取authorId
  */
 async function searchAuthorByDouyinUrl(douyinUrl, cookies) {
-    const path = '/gw/api/gsearch/search_for_author_square';
-    const postData = {
-        scene_param: {
-            platform_source: 1,
-            search_scene: 1,
-            display_scene: 1,
-            task_category: 1,
-            marketing_target: 1,
-            first_industry_id: 0
-        },
-        page_param: {
-            page: "1",
-            limit: "20"
-        },
-        sort_param: {
-            sort_field: { field_name: "score" },
-            sort_type: 2
-        },
-        search_param: {
-            seach_type: 2,
-            keyword: douyinUrl,
-            is_new_nickname_query: true
-        }
-    };
-    
-    const options = getPostRequestOptions(path, cookies, postData);
-    const dataStr = JSON.stringify(postData);
-    
-    try {
-        const response = await makeRequest(options, dataStr);
-        if (response.statusCode === 200) {
-            const result = JSON.parse(response.data);
-            if (result.base_resp && result.base_resp.status_code === 0) {
-                const authors = result.authors || [];
-                if (authors.length > 0) {
-                    const authorId = authors[0].attribute_datas?.id || authors[0].star_id;
-                    const nickName = authors[0].attribute_datas?.nick_name || '';
-                    return {
-                        success: true,
-                        authorId: authorId,
-                        nickName: nickName
-                    };
-                }
-                return { success: false, message: '未找到对应的达人' };
+    return await withRetry(async () => {
+        const path = '/gw/api/gsearch/search_for_author_square';
+        const postData = {
+            scene_param: {
+                platform_source: 1,
+                search_scene: 1,
+                display_scene: 1,
+                task_category: 1,
+                marketing_target: 1,
+                first_industry_id: 0
+            },
+            page_param: {
+                page: "1",
+                limit: "20"
+            },
+            sort_param: {
+                sort_field: { field_name: "score" },
+                sort_type: 2
+            },
+            search_param: {
+                seach_type: 2,
+                keyword: douyinUrl,
+                is_new_nickname_query: true
             }
-            return { success: false, message: result.base_resp?.status_message || '搜索失败' };
+        };
+        
+        const options = getPostRequestOptions(path, cookies, postData);
+        const dataStr = JSON.stringify(postData);
+        
+        const response = await makeRequest(options, dataStr);
+        if (response.statusCode === 0) {
+            return { success: false, message: response.error || '网络请求失败' };
         }
-        return { success: false, message: `HTTP错误: ${response.statusCode}` };
-    } catch (e) {
-        return { success: false, message: e.message };
-    }
+        if (response.statusCode !== 200) {
+            return { success: false, message: `HTTP错误: ${response.statusCode}` };
+        }
+        
+        const parsed = safeJsonParse(response.data, 'searchAuthorByDouyinUrl');
+        if (!parsed.success) {
+            return { success: false, message: parsed.error };
+        }
+        
+        const result = parsed.result;
+        if (result.base_resp && result.base_resp.status_code === 0) {
+            const authors = result.authors || [];
+            if (authors.length > 0) {
+                const authorId = authors[0].attribute_datas?.id || authors[0].star_id;
+                const nickName = authors[0].attribute_datas?.nick_name || '';
+                return {
+                    success: true,
+                    authorId: authorId,
+                    nickName: nickName
+                };
+            }
+            return { success: false, message: '未找到对应的达人' };
+        }
+        
+        return { success: false, message: result.base_resp?.status_message || '搜索失败' };
+    }, 'searchAuthorByDouyinUrl', 5);
 }
 
 // ==================== 安全JSON解析 ====================
@@ -1099,7 +1124,7 @@ async function collectBloggerData(authorId, cookies, selectedFields = {}) {
         } else if (!result.success) {
             errors.push(`${apiName}: ${result.message || '未知错误'}`);
         }
-        await sleep(200);
+        await sleep(80);
         return result;
     };
     

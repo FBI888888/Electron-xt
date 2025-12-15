@@ -104,6 +104,45 @@ function showModal(title, content, buttons = [], getFormData = null) {
     });
 }
 
+function showDisclaimerModal() {
+    return new Promise((resolve) => {
+        const container = document.getElementById('modal-container');
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        overlay.style.background = 'rgba(0, 0, 0, 0.7)';
+
+        overlay.innerHTML = `
+            <div class="modal" style="max-width: 500px;">
+                <div class="modal-header" style="font-size: 18px; font-weight: 600;">软件使用免责声明</div>
+                <div class="modal-body" style="padding: 20px;">
+                    <div style="line-height: 1.8; color: #555;">
+                        <p style="margin-bottom: 12px;">本软件仅提供公开信息采集工具功能，仅支持采集抖音星图平台已公开的达人主页信息，不具备获取非公开数据的能力。</p>
+                        <p style="margin-bottom: 12px;">使用者需遵守相关法律法规及平台规则，严禁违规使用软件。</p>
+                        <p style="margin-bottom: 12px;">因违规使用导致的法律责任、第三方索赔等，均由使用者自行承担，与开发者无关。</p>
+                        <p style="font-weight: 600; color: #333;">您使用本软件即视为同意本声明全部条款。</p>
+                    </div>
+                </div>
+                <div class="modal-footer" style="justify-content: center; gap: 20px;">
+                    <button class="btn btn-secondary" id="disclaimer-reject" style="min-width: 100px;">拒绝</button>
+                    <button class="btn btn-primary" id="disclaimer-accept" style="min-width: 100px;">接受声明</button>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(overlay);
+
+        document.getElementById('disclaimer-accept').addEventListener('click', () => {
+            overlay.remove();
+            resolve(true);
+        });
+
+        document.getElementById('disclaimer-reject').addEventListener('click', () => {
+            overlay.remove();
+            resolve(false);
+        });
+    });
+}
+
 // 确认对话框
 async function showConfirm(title, message) {
     return showModal(title, `<p>${message}</p>`, [
@@ -215,8 +254,29 @@ function showPermissionDenied() {
 
 // ==================== 账号管理页面 ====================
 
+function getTodayDate() {
+    return new Date().toISOString().split('T')[0];
+}
+
 async function loadAccounts() {
     accounts = await loadJsonData(ACCOUNTS_FILE, []);
+    
+    // 检查日期，每日归零已采集次数
+    const today = getTodayDate();
+    let needSave = false;
+    for (const account of accounts) {
+        if (account.lastCollectDate !== today) {
+            account.collectedCount = 0;
+            account.lastCollectDate = today;
+            needSave = true;
+        }
+    }
+    
+    // 如果有更新则保存
+    if (needSave) {
+        await saveJsonData(ACCOUNTS_FILE, accounts);
+    }
+    
     renderAccountTable();
 }
 
@@ -945,6 +1005,8 @@ async function importFromTxt() {
     ]);
     
     if (!filePath) return;
+
+    logLinkConvert('TXT导入：选择文件', { filePath });
     
     const result = await ipcRenderer.invoke('read-file', filePath);
     
@@ -1061,7 +1123,7 @@ async function startCollect() {
         if (!isCollecting) break;
         
         while (isPaused && isCollecting) {
-            await sleep(500);
+            await sleep(150);
         }
         
         if (!isCollecting) break;
@@ -1115,7 +1177,7 @@ async function startCollect() {
                     continue;
                 }
                 
-                await sleep(500);
+                await sleep(150);
                 collectItems[i].status = `采集中...(${account.remark || account.nickName})`;
                 renderCollectTable();
             }
@@ -1131,6 +1193,7 @@ async function startCollect() {
             
             if (result.success) {
                 collectItems[i].status = '已完成';
+                collectItems[i].author_id = authorId;
                 collectItems[i].nickname = result.data['达人昵称'] || collectItems[i].nickname || '';
                 collectItems[i].fansLevel = formatFansCount(result.data['粉丝数']) || '';
                 collectItems[i].collect_time = new Date().toLocaleString('zh-CN');
@@ -1215,6 +1278,8 @@ async function saveToExcel() {
         showToast('warning', '提示', '没有已采集的数据可保存');
         return;
     }
+
+    const isSvip = await ipcRenderer.invoke('is-svip');
     
     const defaultFilename = settings?.local?.filename || 'collected_data.xlsx';
     const defaultPath = settings?.local?.path || '';
@@ -1229,20 +1294,88 @@ async function saveToExcel() {
     
     try {
         const XLSX = require('xlsx');
+
+        const toWan = (value) => {
+            if (value === undefined || value === null || value === '') return '';
+            const s = String(value).trim();
+            if (!s) return '';
+            if (/w$/i.test(s)) return s;
+            const n = parseFloat(s);
+            if (Number.isNaN(n)) return s;
+            return n >= 10000 ? (n / 10000).toFixed(1) + 'w' : String(n);
+        };
+
+        const prefixFields = [
+            '星图ID',
+            '星图主页',
+            '达人昵称',
+            ...(isSvip ? ['微信号'] : []),
+            '归属地',
+            '性别',
+            '个人介绍',
+            '抖音ID',
+            '抖音主页',
+            'MCN机构',
+            '粉丝数',
+            '粉丝数-万',
+            '月连接用户数',
+            '月连接用户数-万',
+            '达人类型',
+            '内容主题'
+        ];
+
+        const skipKeys = new Set(prefixFields);
+        skipKeys.add('authorId');
+        skipKeys.add('微信号');
+
+        // 后续字段按首次出现顺序收集，确保列顺序稳定，且最后一列可以固定为“采集时间”
+        const extraKeys = [];
+        completedItems.forEach((item) => {
+            const data = item.collectedData || {};
+            Object.keys(data).forEach((k) => {
+                if (!skipKeys.has(k) && !extraKeys.includes(k)) {
+                    extraKeys.push(k);
+                }
+            });
+        });
         
         // 导出采集到的详细数据
         const exportData = completedItems.map(item => {
             const data = item.collectedData || {};
-            return {
-                '达人ID': item.user_id,
-                '星图主页': item.xingtu_url,
-                '抖音主页': item.douyin_url,
-                '采集时间': item.collect_time || '',
-                ...data
-            };
+
+            const row = {};
+            row['星图ID'] = item.author_id || item.user_id || data.authorId || data.author_id || '';
+            row['星图主页'] = item.xingtu_url || '';
+            row['达人昵称'] = data['达人昵称'] || '';
+            if (isSvip) {
+                row['微信号'] = data['微信号'] || '';
+            }
+            row['归属地'] = data['归属地'] || '';
+            row['性别'] = data['性别'] || '';
+            row['个人介绍'] = data['个人介绍'] || '';
+            row['抖音ID'] = data['抖音ID'] || '';
+            row['抖音主页'] = item.douyin_url || data['抖音主页'] || '';
+            row['MCN机构'] = data['MCN机构'] || '';
+            row['粉丝数'] = data['粉丝数'] || '';
+            row['粉丝数-万'] = toWan(data['粉丝数']);
+            row['月连接用户数'] = data['月连接用户数'] || '';
+            row['月连接用户数-万'] = toWan(data['月连接用户数']);
+            row['达人类型'] = data['达人类型'] || '';
+            row['内容主题'] = data['内容主题'] || '';
+
+            // 后面的字段保持顺序不动（按首次出现顺序），并移除 authorId
+            extraKeys.forEach((k) => {
+                row[k] = data[k] !== undefined ? data[k] : '';
+            });
+
+            // 采集时间放在后续字段区域（不参与前置字段顺序）
+            row['采集时间'] = item.collect_time || '';
+
+            return row;
         });
         
-        const ws = XLSX.utils.json_to_sheet(exportData);
+        const header = [...prefixFields, ...extraKeys, '采集时间'];
+        const ws = XLSX.utils.json_to_sheet(exportData, { header });
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, '采集数据');
         XLSX.writeFile(wb, savePath);
@@ -1335,11 +1468,78 @@ async function startFetchBloggers() {
             break;
         }
         
-        // TODO: 根据星图实际返回数据结构处理
-        result.data.forEach(item => {
+        // 解析星图API返回的数据结构
+        result.data.forEach(author => {
+            const attrs = author.attribute_datas || {};
+            const starId = attrs.id || author.star_id;
+            
+            // 解析个人标签
+            let personalTags = '';
+            try {
+                const tagsRelation = JSON.parse(attrs.tags_relation || '{}');
+                personalTags = Object.keys(tagsRelation).join(', ');
+            } catch (e) {}
+            
+            // 解析内容标签
+            let contentTags = '';
+            try {
+                const contentLabels = JSON.parse(attrs.content_theme_labels_180d || '[]');
+                contentTags = contentLabels.slice(0, 5).join(', ');
+            } catch (e) {}
+            
+            // 解析报价信息
+            let videoPrice = '-';
+            if (author.task_infos && author.task_infos.length > 0) {
+                const priceInfo = author.task_infos[0].price_infos;
+                if (priceInfo && priceInfo.length > 0) {
+                    // 查找 video_type=1 的报价（1-20秒短视频）
+                    const shortVideoPrice = priceInfo.find(p => p.video_type === 1);
+                    if (shortVideoPrice) {
+                        videoPrice = shortVideoPrice.price;
+                    } else {
+                        videoPrice = priceInfo[0].price;
+                    }
+                }
+            }
+            
+            // 数字转万的辅助函数
+            const toWan = (num) => {
+                const n = parseInt(num) || 0;
+                return n >= 10000 ? (n / 10000).toFixed(1) + 'w' : n;
+            };
+            
+            const follower = parseInt(attrs.follower) || 0;
+            const playMedian = parseInt(attrs.vv_median_30d) || 0;
+            const interactMedian = parseInt(attrs.interaction_median_30d) || 0;
+            const expectedPlay = parseInt(attrs.expected_play_num) || 0;
+            
             bloggerList.push({
-                // 根据实际数据结构调整字段映射
-                ...item
+                avatar_uri: attrs.avatar_uri || '',
+                xingtu_url: `https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/${starId}`,
+                nickname: attrs.nick_name || '',
+                location: `${attrs.province || ''}${attrs.city || ''}`,
+                gender: attrs.gender === '1' ? '男' : attrs.gender === '2' ? '女' : '-',
+                personal_tags: personalTags,
+                content_tags: contentTags,
+                fans_count: follower,
+                fans_count_wan: toWan(follower),
+                fans_increment_30d: attrs.fans_increment_within_30d || '-',
+                play_median: playMedian,
+                play_median_wan: toWan(playMedian),
+                interact_median: interactMedian,
+                interact_median_wan: toWan(interactMedian),
+                completion_rate: attrs.play_over_rate_within_30d ? (parseFloat(attrs.play_over_rate_within_30d) * 100).toFixed(2) + '%' : '-',
+                interact_rate: attrs.interact_rate_within_30d ? (parseFloat(attrs.interact_rate_within_30d) * 100).toFixed(2) + '%' : '-',
+                expected_play_num: expectedPlay,
+                expected_play_num_wan: toWan(expectedPlay),
+                ecom_level: attrs.author_ecom_level || '-',
+                star_index: attrs.link_star_index || '-',
+                spread_index: attrs.link_spread_index || '-',
+                shopping_index: attrs.link_shopping_index || '-',
+                price_1_20: attrs.price_1_20 || '-',
+                price_20_60: attrs.price_20_60 || '-',
+                price_60: attrs.price_60 || '-',
+                star_id: starId
             });
         });
         
@@ -1366,7 +1566,7 @@ function renderBloggerList() {
     if (bloggerList.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="15" style="text-align: center; padding: 40px; color: #999;">
+                <td colspan="26" style="text-align: center; padding: 40px; color: #999;">
                     暂无数据，请先获取达人列表
                 </td>
             </tr>
@@ -1374,24 +1574,34 @@ function renderBloggerList() {
         return;
     }
     
-    // TODO: 根据星图实际数据结构渲染表格
     tbody.innerHTML = bloggerList.map((item, index) => `
         <tr>
             <td>${index + 1}</td>
-            <td title="${item.xingtu_url || ''}">${item.xingtu_url || '-'}</td>
-            <td title="${item.douyin_url || ''}">${item.douyin_url || '-'}</td>
-            <td>${item.nickname || '-'}</td>
-            <td>${item.location || '-'}</td>
-            <td>${item.personal_tags || '-'}</td>
-            <td>${item.content_tags || '-'}</td>
+            <td>${item.avatar_uri ? `<img src="${item.avatar_uri}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '-'}</td>
+            <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="${item.xingtu_url || '#'}" target="_blank" style="color: #007bff; text-decoration: none;">${item.xingtu_url || '-'}</a></td>
+            <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.nickname || '-'}</td>
+            <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.location || '-'}</td>
             <td>${item.gender || '-'}</td>
+            <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${item.personal_tags || ''}">${item.personal_tags || '-'}</td>
+            <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${item.content_tags || ''}">${item.content_tags || '-'}</td>
             <td>${item.fans_count || '-'}</td>
             <td>${item.fans_count_wan || '-'}</td>
+            <td>${item.fans_increment_30d || '-'}</td>
             <td>${item.play_median || '-'}</td>
+            <td>${item.play_median_wan || '-'}</td>
             <td>${item.interact_median || '-'}</td>
+            <td>${item.interact_median_wan || '-'}</td>
             <td>${item.completion_rate || '-'}</td>
-            <td>${item.video_price || '-'}</td>
-            <td>${item.live_price || '-'}</td>
+            <td>${item.interact_rate || '-'}</td>
+            <td>${item.expected_play_num || '-'}</td>
+            <td>${item.expected_play_num_wan || '-'}</td>
+            <td>${item.ecom_level || '-'}</td>
+            <td>${item.star_index || '-'}</td>
+            <td>${item.spread_index || '-'}</td>
+            <td>${item.shopping_index || '-'}</td>
+            <td>${item.price_1_20 || '-'}</td>
+            <td>${item.price_20_60 || '-'}</td>
+            <td>${item.price_60 || '-'}</td>
         </tr>
     `).join('');
 }
@@ -1424,23 +1634,32 @@ async function exportBloggerList() {
     try {
         const XLSX = require('xlsx');
         
-        // TODO: 根据实际数据结构调整导出字段
         const exportData = bloggerList.map((item, index) => ({
             '序号': index + 1,
             '星图主页': item.xingtu_url || '',
-            '抖音主页': item.douyin_url || '',
             '达人昵称': item.nickname || '',
             '归属地': item.location || '',
+            '性别': item.gender || '',
             '个人标签': item.personal_tags || '',
             '内容标签': item.content_tags || '',
-            '性别': item.gender || '',
             '粉丝数': item.fans_count || '',
             '粉丝数-万': item.fans_count_wan || '',
+            '30天涨粉': item.fans_increment_30d || '',
             '播放中位数': item.play_median || '',
+            '播放中位-万': item.play_median_wan || '',
             '互动中位数': item.interact_median || '',
+            '互动中位-万': item.interact_median_wan || '',
             '完播率': item.completion_rate || '',
-            '视频报价': item.video_price || '',
-            '直播报价': item.live_price || ''
+            '互动率': item.interact_rate || '',
+            '预估播放量': item.expected_play_num || '',
+            '预估播放-万': item.expected_play_num_wan || '',
+            '电商等级': item.ecom_level || '',
+            '星图指数': item.star_index || '',
+            '传播指数': item.spread_index || '',
+            '种草指数': item.shopping_index || '',
+            '1-20秒报价': item.price_1_20 || '',
+            '20-60秒报价': item.price_20_60 || '',
+            '60秒+报价': item.price_60 || ''
         }));
         
         const ws = XLSX.utils.json_to_sheet(exportData);
@@ -1462,6 +1681,536 @@ function initBloggerListPage() {
     document.getElementById('export-blogger-btn').addEventListener('click', exportBloggerList);
     
     renderBloggerList();
+}
+
+// ==================== 链接转换页面 ====================
+
+let linkConvertList = [];
+let isConverting = false;
+
+function logLinkConvert(message, extra) {
+    if (extra !== undefined) {
+        console.log(`[LinkConvert] ${message}`, extra);
+    } else {
+        console.log(`[LinkConvert] ${message}`);
+    }
+}
+
+function addLinkConvertItem(originalLine) {
+    const url = extractUrlFromText(originalLine);
+    if (!url) {
+        logLinkConvert('跳过：未提取到URL', { originalLine });
+        return false;
+    }
+    if (!isDouyinUserUrl(url) && !isDouyinShortUrl(url)) {
+        logLinkConvert('跳过：非抖音主页/短链', { originalLine, url });
+        return false;
+    }
+    
+    const existingItem = linkConvertList.find(item => item.extractedUrl === url || item.original === originalLine);
+    if (existingItem) {
+        logLinkConvert('跳过：重复链接', { originalLine, url });
+        return false;
+    }
+    
+    linkConvertList.push({
+        original: originalLine,
+        extractedUrl: url,
+        douyinUrl: isDouyinUserUrl(url) ? url : '',
+        xingtuUrl: '',
+        status: 'pending',
+        error: ''
+    });
+
+    logLinkConvert('已添加待转换项', { url, douyinUrl: isDouyinUserUrl(url) ? url : '' });
+    return true;
+}
+
+// 从文本中提取URL
+function extractUrlFromText(text) {
+    // 匹配抖音链接
+    const urlMatch = text.match(/https?:\/\/[^\s\u4e00-\u9fa5]+/);
+    return urlMatch ? urlMatch[0] : null;
+}
+
+// 判断是否为抖音主页链接
+function isDouyinUserUrl(url) {
+    return url && url.includes('www.douyin.com/user/');
+}
+
+// 判断是否为抖音短链接
+function isDouyinShortUrl(url) {
+    return url && url.includes('v.douyin.com/');
+}
+
+async function importLinksFromExcel() {
+    const filePath = await ipcRenderer.invoke('select-file', [
+        { name: 'Excel Files', extensions: ['xlsx', 'xls'] }
+    ]);
+    
+    if (!filePath) return;
+
+    logLinkConvert('Excel导入：选择文件', { filePath });
+    
+    try {
+        const XLSX = require('xlsx');
+        const workbook = XLSX.readFile(filePath);
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        
+        let addedCount = 0;
+        let skippedCount = 0;
+        
+        data.forEach(row => {
+            if (row[0]) {
+                const line = String(row[0]).trim();
+                if (line) {
+                    if (addLinkConvertItem(line)) {
+                        addedCount++;
+                    } else {
+                        skippedCount++;
+                    }
+                }
+            }
+        });
+        
+        renderLinkConvertList();
+        document.getElementById('start-convert-btn').disabled = linkConvertList.length === 0;
+        logLinkConvert('Excel导入完成', { addedCount, skippedCount, total: linkConvertList.length });
+        showToast('success', '导入成功', `成功导入 ${addedCount} 条，跳过 ${skippedCount} 条`);
+    } catch (err) {
+        logLinkConvert('Excel导入失败', { message: err.message, stack: err.stack });
+        showToast('error', '导入失败', `无法读取Excel文件: ${err.message}`);
+    }
+}
+
+async function importLinksFromText() {
+    const content = `
+        <p style="margin-bottom: 10px; color: #666;">请输入链接，每行一个：</p>
+        <textarea class="textarea" id="link-import-text" placeholder="请输入链接，每行一个。
+支持格式：
+https://v.douyin.com/xxxxx/
+https://www.douyin.com/user/xxxxx"></textarea>
+    `;
+    
+    const result = await showModal('文本导入', content, [
+        { text: '取消', value: false },
+        { text: '导入', value: true, primary: true }
+    ], () => {
+        const textArea = document.getElementById('link-import-text');
+        return textArea ? textArea.value : '';
+    });
+    
+    if (result && result.confirmed && result.data) {
+        const text = result.data;
+        const lines = text.trim().split('\n');
+        let addedCount = 0;
+        let skippedCount = 0;
+
+        logLinkConvert('文本导入：开始处理', { lines: lines.length });
+        
+        lines.forEach(line => {
+            const v = line.trim();
+            if (v) {
+                if (addLinkConvertItem(v)) {
+                    addedCount++;
+                } else {
+                    skippedCount++;
+                }
+            }
+        });
+        
+        renderLinkConvertList();
+        document.getElementById('start-convert-btn').disabled = linkConvertList.length === 0;
+        logLinkConvert('文本导入完成', { addedCount, skippedCount, total: linkConvertList.length });
+        showToast('success', '导入成功', `成功导入 ${addedCount} 条，跳过 ${skippedCount} 条`);
+    }
+}
+
+async function importLinksFromTxt() {
+    const filePath = await ipcRenderer.invoke('select-file', [
+        { name: 'Text Files', extensions: ['txt'] }
+    ]);
+    
+    if (!filePath) return;
+    
+    const result = await ipcRenderer.invoke('read-file', filePath);
+    
+    if (!result.success) {
+        showToast('error', '导入失败', `无法读取TXT文件: ${result.error}`);
+        return;
+    }
+    
+    const lines = result.content.split('\n');
+    let addedCount = 0;
+    let skippedCount = 0;
+
+    logLinkConvert('TXT导入：开始处理', { lines: lines.length });
+    
+    lines.forEach(line => {
+        const v = line.trim();
+        if (v) {
+            if (addLinkConvertItem(v)) {
+                addedCount++;
+            } else {
+                skippedCount++;
+            }
+        }
+    });
+    
+    renderLinkConvertList();
+    document.getElementById('start-convert-btn').disabled = linkConvertList.length === 0;
+    logLinkConvert('TXT导入完成', { addedCount, skippedCount, total: linkConvertList.length });
+    showToast('success', '导入成功', `成功导入 ${addedCount} 条，跳过 ${skippedCount} 条`);
+}
+
+// 转换单条（带重试）
+async function convertSingleItem(item, index, cookies, maxRetries = 3) {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+            // 步骤1: 获取抖音主页URL
+            if (!item.douyinUrl) {
+                if (isDouyinShortUrl(item.extractedUrl)) {
+                    logLinkConvert(`[${index}] 解析短链接 (尝试${attempt + 1})`, { shortUrl: item.extractedUrl });
+                    const resolveResult = await ipcRenderer.invoke('resolve-douyin-short-link', item.extractedUrl);
+                    logLinkConvert(`[${index}] 短链接解析返回`, resolveResult);
+                    if (resolveResult.success) {
+                        item.douyinUrl = resolveResult.userUrl;
+                    } else {
+                        throw new Error(resolveResult.message || '解析短链接失败');
+                    }
+                }
+            }
+            
+            // 步骤2: 通过抖音主页获取星图作者ID
+            if (item.douyinUrl && !item.xingtuUrl) {
+                logLinkConvert(`[${index}] 搜索星图authorId (尝试${attempt + 1})`, { douyinUrl: item.douyinUrl });
+                const searchResult = await ipcRenderer.invoke('search-xingtu-author', item.douyinUrl, cookies);
+                logLinkConvert(`[${index}] 星图搜索返回`, searchResult);
+                if (searchResult.success && searchResult.authorId) {
+                    item.xingtuUrl = `https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/${searchResult.authorId}`;
+                    item.status = 'success';
+                    logLinkConvert(`[${index}] 转换成功`, { douyinUrl: item.douyinUrl, xingtuUrl: item.xingtuUrl });
+                    return true;
+                } else {
+                    throw new Error(searchResult.message || '未找到星图达人');
+                }
+            }
+            
+            return true;
+        } catch (err) {
+            logLinkConvert(`[${index}] 尝试${attempt + 1}失败: ${err.message}`);
+            if (attempt < maxRetries - 1) {
+                const delay = 200 * (attempt + 1);
+                logLinkConvert(`[${index}] 等待${delay}ms后重试...`);
+                await sleep(delay);
+            } else {
+                item.status = 'failed';
+                item.error = err.message;
+                logLinkConvert(`[${index}] 最终失败`, { extractedUrl: item.extractedUrl, message: err.message });
+                return false;
+            }
+        }
+    }
+    return false;
+}
+
+// 开始转换（双线程并发）
+async function startConvert() {
+    if (linkConvertList.length === 0) {
+        showToast('warning', '提示', '没有链接可转换');
+        return;
+    }
+    
+    // 获取有效账号的cookies
+    const validAccounts = accounts.filter(a => a.status === '正常' && a.cookies);
+    if (validAccounts.length === 0) {
+        showToast('error', '错误', '没有有效账号，请先添加并验证账号');
+        return;
+    }
+    
+    const cookies = validAccounts[0].cookies;
+    const CONCURRENCY = 2; // 双线程并发
+
+    logLinkConvert('开始转换', {
+        total: linkConvertList.length,
+        concurrency: CONCURRENCY,
+        usingAccount: validAccounts[0].remark || validAccounts[0].nickName || 'unknown'
+    });
+    
+    isConverting = true;
+    document.getElementById('start-convert-btn').disabled = true;
+    document.getElementById('stop-convert-btn').disabled = false;
+    document.getElementById('link-excel-import-btn').disabled = true;
+    document.getElementById('link-text-import-btn').disabled = true;
+    document.getElementById('link-txt-import-btn').disabled = true;
+    
+    const statusEl = document.getElementById('convert-status');
+    let successCount = 0;
+    let failCount = 0;
+    let processedCount = 0;
+    
+    // 获取待处理的项目索引
+    const pendingIndices = [];
+    for (let i = 0; i < linkConvertList.length; i++) {
+        if (linkConvertList[i].status !== 'success') {
+            pendingIndices.push(i);
+        }
+    }
+    
+    let currentIdx = 0;
+    
+    // 工作线程函数
+    async function worker(workerId) {
+        while (isConverting && currentIdx < pendingIndices.length) {
+            const idx = currentIdx++;
+            if (idx >= pendingIndices.length) break;
+            
+            const itemIndex = pendingIndices[idx];
+            const item = linkConvertList[itemIndex];
+            
+            logLinkConvert(`Worker${workerId} 处理第${itemIndex + 1}条`);
+            item.status = 'processing';
+            renderLinkConvertList();
+            
+            const success = await convertSingleItem(item, itemIndex + 1, cookies, 3);
+            
+            processedCount++;
+            if (success && item.status === 'success') {
+                successCount++;
+            } else if (item.status === 'failed') {
+                failCount++;
+            }
+            
+            statusEl.textContent = `正在转换: ${processedCount}/${pendingIndices.length} (成功${successCount}/失败${failCount})`;
+            renderLinkConvertList();
+            
+            // 短链解析需要间隔，避免浏览器资源抢夺；星图API请求也需要间隔
+            await sleep(100);
+        }
+    }
+    
+    // 启动双线程，错开启动避免同时创建浏览器
+    const workers = [];
+    for (let i = 0; i < CONCURRENCY; i++) {
+        workers.push(worker(i + 1));
+        if (i < CONCURRENCY - 1) {
+            await sleep(500); // 错开启动
+        }
+    }
+    
+    await Promise.all(workers);
+    
+    isConverting = false;
+    document.getElementById('start-convert-btn').disabled = false;
+    document.getElementById('stop-convert-btn').disabled = true;
+    document.getElementById('link-excel-import-btn').disabled = false;
+    document.getElementById('link-text-import-btn').disabled = false;
+    document.getElementById('link-txt-import-btn').disabled = false;
+    statusEl.textContent = `转换完成: 成功 ${successCount}, 失败 ${failCount}`;
+
+    logLinkConvert('转换结束', { successCount, failCount });
+}
+
+// 停止转换
+function stopConvert() {
+    isConverting = false;
+    document.getElementById('start-convert-btn').disabled = false;
+    document.getElementById('stop-convert-btn').disabled = true;
+    document.getElementById('link-excel-import-btn').disabled = false;
+    document.getElementById('link-text-import-btn').disabled = false;
+    document.getElementById('link-txt-import-btn').disabled = false;
+    showToast('info', '已停止', '转换已停止');
+}
+
+async function manualConvertLink(index) {
+    if (isConverting) {
+        showToast('warning', '提示', '正在批量转换中，请先停止后再手动转换');
+        return;
+    }
+
+    const item = linkConvertList[index];
+    if (!item) return;
+
+    const validAccounts = accounts.filter(a => a.status === '正常' && a.cookies);
+    if (validAccounts.length === 0) {
+        showToast('error', '错误', '没有有效账号，请先添加并验证账号');
+        return;
+    }
+
+    const cookies = validAccounts[0].cookies;
+
+    logLinkConvert('手动转换单条', { index: index + 1, extractedUrl: item.extractedUrl });
+
+    item.status = 'processing';
+    item.error = '';
+    item.xingtuUrl = '';
+    renderLinkConvertList();
+
+    const ok = await convertSingleItem(item, index + 1, cookies, 3);
+    if (ok && item.status === 'success') {
+        showToast('success', '转换成功', `第 ${index + 1} 条转换成功`);
+    } else {
+        showToast('error', '转换失败', `第 ${index + 1} 条转换失败：${item.error || '未知错误'}`);
+    }
+
+    renderLinkConvertList();
+}
+
+function showLinkConvertContextMenu(x, y, index) {
+    document.querySelectorAll('.context-menu').forEach(m => m.remove());
+
+    const menu = document.createElement('div');
+    menu.className = 'context-menu';
+    menu.innerHTML = `
+        <div class="context-menu-item" data-action="convert">转换链接</div>
+    `;
+
+    menu.style.left = `${x}px`;
+    menu.style.top = `${y}px`;
+    document.body.appendChild(menu);
+
+    menu.querySelectorAll('.context-menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const action = item.dataset.action;
+            menu.remove();
+
+            if (action === 'convert') {
+                manualConvertLink(index);
+            }
+        });
+    });
+
+    setTimeout(() => {
+        document.addEventListener('click', function handler() {
+            menu.remove();
+            document.removeEventListener('click', handler);
+        });
+    }, 0);
+}
+
+// 渲染链接转换列表
+function renderLinkConvertList() {
+    const tbody = document.getElementById('link-convert-tbody');
+    
+    if (linkConvertList.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 40px; color: #999;">
+                    暂无数据，请导入链接文件
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = linkConvertList.map((item, index) => {
+        let statusText = '';
+        let statusClass = '';
+        let rowStyle = '';
+        
+        switch (item.status) {
+            case 'pending':
+                statusText = '待转换';
+                statusClass = 'status-tag pending';
+                break;
+            case 'processing':
+                statusText = '转换中';
+                statusClass = 'status-tag normal';
+                break;
+            case 'success':
+                statusText = '成功';
+                statusClass = 'status-tag normal';
+                break;
+            case 'failed':
+                statusText = '失败';
+                statusClass = 'status-tag error';
+                rowStyle = 'background-color: #fff0f0;';
+                break;
+        }
+        
+        return `
+            <tr style="${rowStyle}" data-index="${index}">
+                <td>${index + 1}</td>
+                <td><span class="${statusClass}">${statusText}</span></td>
+                <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left;" title="${item.original}">${item.original}</td>
+                <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left;" title="${item.douyinUrl || item.error || ''}">${item.douyinUrl || (item.error ? `<span style="color: red;">${item.error}</span>` : '-')}</td>
+                <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left;">${item.xingtuUrl ? `<a href="${item.xingtuUrl}" target="_blank" style="color: #007bff;">${item.xingtuUrl}</a>` : '-'}</td>
+            </tr>
+        `;
+    }).join('');
+
+    // 绑定右键菜单
+    tbody.querySelectorAll('tr').forEach(row => {
+        row.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            const index = parseInt(row.dataset.index);
+            showLinkConvertContextMenu(e.clientX, e.clientY, index);
+        });
+    });
+}
+
+// 清空链接列表
+async function clearLinkConvertList() {
+    if (linkConvertList.length === 0) return;
+    
+    const confirmed = await showConfirm('确认清空', '确定要清空链接列表吗？');
+    if (confirmed) {
+        linkConvertList = [];
+        renderLinkConvertList();
+        document.getElementById('start-convert-btn').disabled = true;
+        showToast('success', '已清空', '链接列表已清空');
+    }
+}
+
+// 导出链接列表
+async function exportLinkConvertList() {
+    if (linkConvertList.length === 0) {
+        showToast('warning', '提示', '没有数据可导出');
+        return;
+    }
+    
+    const savePath = await ipcRenderer.invoke('select-save-path', {
+        title: '导出链接转换结果',
+        defaultPath: '链接转换结果.xlsx',
+        filters: [{ name: 'Excel Files', extensions: ['xlsx'] }]
+    });
+    
+    if (!savePath) return;
+    
+    try {
+        const XLSX = require('xlsx');
+        
+        const exportData = linkConvertList.map((item, index) => ({
+            '序号': index + 1,
+            '状态': item.status === 'success' ? '成功' : item.status === 'failed' ? '失败' : '待转换',
+            '原始链接': item.original,
+            '抖音主页': item.douyinUrl || '',
+            '星图主页': item.xingtuUrl || '',
+            '错误信息': item.error || ''
+        }));
+        
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, '链接转换结果');
+        XLSX.writeFile(wb, savePath);
+        
+        showToast('success', '导出成功', `数据已导出到: ${savePath}`);
+    } catch (err) {
+        showToast('error', '导出失败', `导出Excel失败: ${err.message}`);
+    }
+}
+
+function initLinkConvertPage() {
+    document.getElementById('link-excel-import-btn').addEventListener('click', importLinksFromExcel);
+    document.getElementById('link-text-import-btn').addEventListener('click', importLinksFromText);
+    document.getElementById('link-txt-import-btn').addEventListener('click', importLinksFromTxt);
+    document.getElementById('start-convert-btn').addEventListener('click', startConvert);
+    document.getElementById('stop-convert-btn').addEventListener('click', stopConvert);
+    document.getElementById('clear-links-btn').addEventListener('click', clearLinkConvertList);
+    document.getElementById('export-links-btn').addEventListener('click', exportLinkConvertList);
+    
+    renderLinkConvertList();
 }
 
 // ==================== 授权信息页面 ====================
@@ -1584,11 +2333,18 @@ function initLicensePage() {
 // ==================== 应用初始化 ====================
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const accepted = await showDisclaimerModal();
+    if (!accepted) {
+        await ipcRenderer.invoke('quit-app');
+        return;
+    }
+
     initNavigation();
     initAccountPage();
     initSettingsPage();
     initCollectPage();
     initBloggerListPage();
+    initLinkConvertPage();
     initLicensePage();
     
     // 加载会员等级

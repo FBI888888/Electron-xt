@@ -47,6 +47,13 @@
                     </svg>
                     <span>达人列表</span>
                 </li>
+                <li class="nav-item" data-page="link-convert">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    <span>链接转换</span>
+                </li>
             </ul>
             <div class="nav-bottom">
                 <li class="nav-item" data-page="license">
@@ -119,7 +126,7 @@
                                     <th style="width: 60px;">等级</th>
                                     <th style="width: 130px;">最大采集次数</th>
                                     <th style="width: 100px;">已采集次数</th>
-                                    <th style="width: 80px;">账号状态</th>
+                                    <th style="width: 120px;">账号状态</th>
                                     <th>Cookies</th>
                                 </tr>
                             </thead>
@@ -418,7 +425,7 @@
                             </svg>
                             打开达人广场
                         </button>
-                        <span style="margin-left: 10px; color: #666;">获取页数:</span>
+                        <span style="margin-left: 10px; color: #666;">最大获取页数:</span>
                         <input type="number" class="input" id="max-pages-input" value="500" min="1" max="500" style="width: 80px;">
                         <button class="btn btn-primary" id="start-fetch-btn" disabled>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -453,27 +460,117 @@
 
                     <!-- 达人列表表格 -->
                     <div class="table-container" style="flex: 1; overflow: auto;">
-                        <table class="table" style="min-width: 1800px; width: max-content; text-align: center;">
+                        <table class="table" style="table-layout: fixed; width: 3200px; text-align: center;">
                             <thead>
                                 <tr>
-                                    <th style="min-width: 50px;">序号</th>
-                                    <th style="min-width: 180px; max-width: 200px;">星图主页</th>
-                                    <th style="min-width: 180px; max-width: 200px;">抖音主页</th>
-                                    <th style="min-width: 120px;">达人昵称</th>
-                                    <th style="min-width: 80px;">归属地</th>
-                                    <th style="min-width: 180px;">个人标签</th>
-                                    <th style="min-width: 180px;">内容标签</th>
-                                    <th style="min-width: 60px;">性别</th>
-                                    <th style="min-width: 100px;">粉丝数</th>
-                                    <th style="min-width: 100px;">粉丝数-万</th>
-                                    <th style="min-width: 130px;">播放中位数</th>
-                                    <th style="min-width: 130px;">互动中位数</th>
-                                    <th style="min-width: 130px;">完播率</th>
-                                    <th style="min-width: 100px;">视频报价</th>
-                                    <th style="min-width: 100px;">直播报价</th>
+                                    <th style="width: 50px;">序号</th>
+                                    <th style="width: 60px;">头像</th>
+                                    <th style="width: 420px;">星图主页</th>
+                                    <th style="width: 120px;">达人昵称</th>
+                                    <th style="width: 100px;">归属地</th>
+                                    <th style="width: 50px;">性别</th>
+                                    <th style="width: 150px;">个人标签</th>
+                                    <th style="width: 200px;">内容标签</th>
+                                    <th style="width: 100px;">粉丝数</th>
+                                    <th style="width: 90px;">粉丝数-万</th>
+                                    <th style="width: 100px;">30天涨粉</th>
+                                    <th style="width: 110px;">播放中位数</th>
+                                    <th style="width: 110px;">互动中位数</th>
+                                    <th style="width: 80px;">完播率</th>
+                                    <th style="width: 80px;">互动率</th>
+                                    <th style="width: 110px;">预估播放量</th>
+                                    <th style="width: 80px;">电商等级</th>
+                                    <th style="width: 80px;">星图指数</th>
+                                    <th style="width: 80px;">传播指数</th>
+                                    <th style="width: 80px;">种草指数</th>
+                                    <th style="width: 100px;">1-20秒报价</th>
+                                    <th style="width: 100px;">20-60秒报价</th>
+                                    <th style="width: 100px;">60秒+报价</th>
                                 </tr>
                             </thead>
                             <tbody id="blogger-list-tbody">
+                                <!-- 数据由JS动态填充 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 链接转换页面 -->
+            <div class="page" id="page-link-convert">
+                <div class="page-header">
+                    <h1>链接转换</h1>
+                </div>
+                <div class="page-body">
+                    <!-- 顶部操作区域 -->
+                    <div class="toolbar">
+                        <button class="btn btn-secondary" id="link-excel-import-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            Excel导入
+                        </button>
+                        <button class="btn btn-secondary" id="link-text-import-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            文本导入
+                        </button>
+                        <button class="btn btn-secondary" id="link-txt-import-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                            TXT文件导入
+                        </button>
+                        <button class="btn btn-primary" id="start-convert-btn" disabled>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            开始转换
+                        </button>
+                        <button class="btn btn-secondary" id="stop-convert-btn" disabled>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <rect x="6" y="6" width="12" height="12"></rect>
+                            </svg>
+                            停止转换
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button class="btn btn-secondary" id="clear-links-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                            清空列表
+                        </button>
+                        <button class="btn btn-secondary" id="export-links-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            导出Excel
+                        </button>
+                        <span class="fetch-status" id="convert-status"></span>
+                    </div>
+
+                    <!-- 链接转换表格 -->
+                    <div class="table-container" style="flex: 1; overflow: auto;">
+                        <table class="table" style="table-layout: fixed; width: 100%; text-align: center;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">序号</th>
+                                    <th style="width: 80px;">状态</th>
+                                    <th style="width: 28%;">原始链接</th>
+                                    <th style="width: 32%;">抖音主页</th>
+                                    <th style="width: 32%;">星图主页</th>
+                                </tr>
+                            </thead>
+                            <tbody id="link-convert-tbody">
                                 <!-- 数据由JS动态填充 -->
                             </tbody>
                         </table>

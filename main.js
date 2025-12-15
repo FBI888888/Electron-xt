@@ -9,6 +9,31 @@ const license = require('./main/license');
 let mainWindow;
 let activationWindow;
 
+// 全局拦截外部协议（例如 bytedance://）以避免触发系统弹窗
+app.on('web-contents-created', (event, contents) => {
+    try {
+        contents.setWindowOpenHandler(({ url }) => {
+            if (url && !/^https?:\/\//i.test(url)) {
+                console.log('[ProtocolBlock] blocked window.open:', url);
+                return { action: 'deny' };
+            }
+            return { action: 'allow' };
+        });
+
+        const blockIfExternalProtocol = (e, url) => {
+            if (url && !/^https?:\/\//i.test(url)) {
+                console.log('[ProtocolBlock] blocked navigation:', url);
+                e.preventDefault();
+            }
+        };
+
+        contents.on('will-navigate', blockIfExternalProtocol);
+        contents.on('will-redirect', blockIfExternalProtocol);
+    } catch (e) {
+        console.log('[ProtocolBlock] init failed:', e.message);
+    }
+});
+
 // 获取应用根目录（项目目录）
 function getAppRootPath() {
     // 开发环境下使用当前工作目录，打包后使用 app 路径
@@ -21,6 +46,8 @@ function getAppRootPath() {
 function createWindow() {
     // 移除菜单栏
     Menu.setApplicationMenu(null);
+
+    const iconPath = process.platform === 'win32' ? path.join(getAppRootPath(), 'logo.ico') : undefined;
     
     // 获取屏幕尺寸，窗口占70%
     const { screen } = require('electron');
@@ -41,7 +68,8 @@ function createWindow() {
         },
         titleBarStyle: 'default',
         show: false,
-        autoHideMenuBar: true
+        autoHideMenuBar: true,
+        icon: iconPath
     });
 
     mainWindow.loadFile('index.html');
@@ -58,6 +86,8 @@ function createWindow() {
 // 创建激活窗口
 function createActivationWindow() {
     Menu.setApplicationMenu(null);
+
+    const iconPath = process.platform === 'win32' ? path.join(getAppRootPath(), 'logo.ico') : undefined;
     
     activationWindow = new BrowserWindow({
         width: 520,
@@ -69,7 +99,8 @@ function createActivationWindow() {
         },
         titleBarStyle: 'default',
         show: false,
-        autoHideMenuBar: true
+        autoHideMenuBar: true,
+        icon: iconPath
     });
 
     activationWindow.loadFile('activation.html');
@@ -368,11 +399,11 @@ ipcMain.handle('open-blogger-browser', async (event, cookies) => {
         }
     }
     
-    // 监听网络请求 - TODO: 根据星图实际API调整
+    // 监听达人广场搜索接口
     capturedRequest = null;
     
     bloggerSession.webRequest.onBeforeRequest(
-        { urls: ['https://www.xingtu.cn/api/*'] },
+        { urls: ['https://www.xingtu.cn/gw/api/gsearch/search_for_author_square*'] },
         (details, callback) => {
             if (details.method === 'POST' && details.uploadData) {
                 try {
@@ -391,7 +422,7 @@ ipcMain.handle('open-blogger-browser', async (event, cookies) => {
     );
     
     bloggerSession.webRequest.onBeforeSendHeaders(
-        { urls: ['https://www.xingtu.cn/api/*'] },
+        { urls: ['https://www.xingtu.cn/gw/api/gsearch/search_for_author_square*'] },
         (details, callback) => {
             if (details.method === 'POST' && capturedRequest) {
                 capturedRequest.headers = details.requestHeaders;
@@ -420,12 +451,13 @@ ipcMain.handle('get-captured-request', () => {
     return capturedRequest;
 });
 
-// 使用捕获的请求参数获取达人列表 - 基础框架
+// 使用捕获的请求参数获取达人列表
 ipcMain.handle('fetch-blogger-list', async (event, pageNum, capturedReq) => {
     return new Promise((resolve) => {
         try {
-            // TODO: 根据星图实际API调整
-            const body = { ...capturedReq.body, page: pageNum };
+            // 修改分页参数
+            const body = { ...capturedReq.body };
+            body.page_param = { ...body.page_param, page: String(pageNum) };
             const bodyStr = JSON.stringify(body);
             
             const headers = { ...capturedReq.headers };
@@ -434,11 +466,9 @@ ipcMain.handle('fetch-blogger-list', async (event, pageNum, capturedReq) => {
             delete headers['accept-encoding'];
             delete headers['Accept-Encoding'];
             
-            const urlObj = new URL(capturedReq.url);
-            
             const options = {
-                hostname: urlObj.hostname,
-                path: urlObj.pathname + urlObj.search,
+                hostname: 'www.xingtu.cn',
+                path: '/gw/api/gsearch/search_for_author_square',
                 method: 'POST',
                 headers: {
                     ...headers,
@@ -453,17 +483,23 @@ ipcMain.handle('fetch-blogger-list', async (event, pageNum, capturedReq) => {
                 res.on('end', () => {
                     try {
                         const jsonData = JSON.parse(data);
-                        // TODO: 根据星图实际返回结构调整
-                        if (jsonData.code === 0) {
+                        // 根据星图实际返回结构处理
+                        if (jsonData.authors && Array.isArray(jsonData.authors)) {
                             resolve({
                                 success: true,
-                                data: jsonData.data?.list || [],
-                                total: jsonData.data?.total || 0
+                                data: jsonData.authors,
+                                total: jsonData.authors.length
+                            });
+                        } else if (jsonData.base_resp && jsonData.base_resp.status_code !== 0) {
+                            resolve({
+                                success: false,
+                                message: jsonData.base_resp.status_message || '获取失败'
                             });
                         } else {
                             resolve({
-                                success: false,
-                                message: jsonData.message || '获取失败'
+                                success: true,
+                                data: [],
+                                total: 0
                             });
                         }
                     } catch (e) {
@@ -509,6 +545,128 @@ ipcMain.handle('close-blogger-browser', () => {
     }
     capturedRequest = null;
     return { success: true };
+});
+
+// ==================== 链接转换功能 ====================
+
+// 解析抖音短链接获取抖音主页URL
+ipcMain.handle('resolve-douyin-short-link', async (event, shortUrl) => {
+    return new Promise((resolve) => {
+        try {
+            console.log('[LinkConvert][Main] resolve-douyin-short-link start:', shortUrl);
+            const { session } = require('electron');
+            const partition = `resolve-link-${Date.now()}`;
+            const resolveSession = session.fromPartition(partition, { cache: false });
+            
+            let foundUserUrl = null;
+            
+            // 监听所有请求，查找抖音主页URL
+            resolveSession.webRequest.onBeforeRequest({ urls: ['*://*/*'] }, (details, callback) => {
+                const url = details.url;
+                // 匹配抖音主页URL格式
+                const userMatch = url.match(/https:\/\/www\.douyin\.com\/user\/([A-Za-z0-9_-]+)/);
+                if (userMatch && !foundUserUrl) {
+                    foundUserUrl = `https://www.douyin.com/user/${userMatch[1]}`;
+                    console.log('[LinkConvert][Main] captured douyin user url:', foundUserUrl);
+                }
+                callback({});
+            });
+            
+            // 创建隐藏窗口
+            const hiddenWindow = new BrowserWindow({
+                width: 800,
+                height: 600,
+                show: false,
+                webPreferences: {
+                    nodeIntegration: false,
+                    contextIsolation: true,
+                    partition: partition
+                }
+            });
+
+            // 额外拦截非 http/https 的跳转，避免触发系统外部协议弹窗
+            try {
+                hiddenWindow.webContents.setWindowOpenHandler(({ url }) => {
+                    if (url && !/^https?:\/\//i.test(url)) {
+                        console.log('[ProtocolBlock] blocked hidden window.open:', url);
+                        return { action: 'deny' };
+                    }
+                    return { action: 'allow' };
+                });
+
+                hiddenWindow.webContents.on('will-navigate', (e, url) => {
+                    if (url && !/^https?:\/\//i.test(url)) {
+                        console.log('[ProtocolBlock] blocked hidden will-navigate:', url);
+                        e.preventDefault();
+                    }
+                });
+
+                hiddenWindow.webContents.on('will-redirect', (e, url) => {
+                    if (url && !/^https?:\/\//i.test(url)) {
+                        console.log('[ProtocolBlock] blocked hidden will-redirect:', url);
+                        e.preventDefault();
+                    }
+                });
+            } catch (e) {
+                console.log('[ProtocolBlock] hidden init failed:', e.message);
+            }
+            
+            // 设置超时
+            const timeout = setTimeout(() => {
+                if (!hiddenWindow.isDestroyed()) {
+                    hiddenWindow.close();
+                }
+                console.log('[LinkConvert][Main] resolve timeout:', shortUrl);
+                resolve({ success: false, message: '请求超时' });
+            }, 15000);
+            
+            // 页面加载完成后等待一下再检查结果
+            hiddenWindow.webContents.on('did-finish-load', () => {
+                console.log('[LinkConvert][Main] did-finish-load:', shortUrl);
+                setTimeout(() => {
+                    clearTimeout(timeout);
+                    if (!hiddenWindow.isDestroyed()) {
+                        hiddenWindow.close();
+                    }
+                    if (foundUserUrl) {
+                        console.log('[LinkConvert][Main] resolve success:', { shortUrl, userUrl: foundUserUrl });
+                        resolve({ success: true, userUrl: foundUserUrl });
+                    } else {
+                        console.log('[LinkConvert][Main] resolve failed (no user url):', shortUrl);
+                        resolve({ success: false, message: '未找到抖音主页' });
+                    }
+                }, 2000);
+            });
+            
+            hiddenWindow.webContents.on('did-fail-load', () => {
+                clearTimeout(timeout);
+                if (!hiddenWindow.isDestroyed()) {
+                    hiddenWindow.close();
+                }
+                console.log('[LinkConvert][Main] did-fail-load:', shortUrl);
+                if (foundUserUrl) {
+                    console.log('[LinkConvert][Main] resolve success after fail-load:', { shortUrl, userUrl: foundUserUrl });
+                    resolve({ success: true, userUrl: foundUserUrl });
+                } else {
+                    console.log('[LinkConvert][Main] resolve failed after fail-load:', shortUrl);
+                    resolve({ success: false, message: '页面加载失败' });
+                }
+            });
+            
+            console.log('[LinkConvert][Main] loadURL:', shortUrl);
+            hiddenWindow.loadURL(shortUrl);
+            
+        } catch (e) {
+            console.log('[LinkConvert][Main] resolve exception:', { shortUrl, message: e.message });
+            resolve({ success: false, message: e.message });
+        }
+    });
+});
+
+// 通过抖音主页获取星图作者ID
+ipcMain.handle('search-xingtu-author', async (event, douyinUrl, cookies) => {
+    const xingtuApi = require('./main/xingtuApi');
+    return await xingtuApi.searchAuthorByDouyinUrl(douyinUrl, cookies);
 });
 
 // ==================== 登录功能 ====================
@@ -663,42 +821,46 @@ ipcMain.handle('open-fangzhou-login', async () => {
     loginSession.clearStorageData();
     loginSession.clearCache();
     
-    let cookiesCaptured = false;
+    const capturedCookies = new Set();
+    let lastCaptureAt = 0;
     
     // 监听grade_info接口（子账号进入星图后会触发）
     loginSession.webRequest.onBeforeSendHeaders(
         { urls: ['https://www.xingtu.cn/gw/api/demander/grade_info*'] },
         async (details, callback) => {
-            if (!cookiesCaptured && details.requestHeaders) {
-                const cookieHeader = details.requestHeaders['Cookie'] || details.requestHeaders['cookie'];
-                if (cookieHeader) {
-                    cookiesCaptured = true;
-                    
-                    // 请求接口获取昵称和等级
-                    const accountInfo = await getXingtuAccountInfo(cookieHeader);
-                    
-                    if (mainWindow && !mainWindow.isDestroyed()) {
-                        mainWindow.webContents.send('xingtu-login-captured', {
-                            cookies: cookieHeader,
-                            nickName: accountInfo.nickName || '',
-                            grade: accountInfo.grade || 0
-                        });
-                    }
-                    
-                    // 关闭所有窗口
-                    setTimeout(() => {
-                        fangzhouChildWindows.forEach(win => {
-                            if (win && !win.isDestroyed()) {
-                                win.close();
-                            }
-                        });
-                        fangzhouChildWindows = [];
-                        if (loginWindow && !loginWindow.isDestroyed()) {
-                            loginWindow.close();
-                            loginWindow = null;
+            try {
+                if (details.requestHeaders) {
+                    const cookieHeader = details.requestHeaders['Cookie'] || details.requestHeaders['cookie'];
+                    if (cookieHeader) {
+                        const now = Date.now();
+                        // 防止同一账号进入页面时短时间内多次触发
+                        if (now - lastCaptureAt < 600) {
+                            callback({ requestHeaders: details.requestHeaders });
+                            return;
                         }
-                    }, 500);
+
+                        if (!capturedCookies.has(cookieHeader)) {
+                            lastCaptureAt = now;
+                            capturedCookies.add(cookieHeader);
+
+                            // 请求接口获取昵称和等级
+                            const accountInfo = await getXingtuAccountInfo(cookieHeader);
+
+                            if (mainWindow && !mainWindow.isDestroyed()) {
+                                mainWindow.webContents.send('xingtu-login-captured', {
+                                    cookies: cookieHeader,
+                                    nickName: accountInfo.nickName || '',
+                                    grade: accountInfo.grade || 0
+                                });
+                            }
+
+                            // 不自动关闭窗口：支持继续点击其它子账号并多次添加
+                            console.log('[FangzhouLogin] captured cookies for sub-account:', accountInfo.nickName || 'unknown');
+                        }
+                    }
                 }
+            } catch (e) {
+                console.log('[FangzhouLogin] capture failed:', e.message);
             }
             callback({ requestHeaders: details.requestHeaders });
         }
