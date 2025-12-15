@@ -10,7 +10,19 @@ on:
       - 'v*'  # 推送版本标签时触发，如 v1.0.0
 
 jobs:
+  # 清理旧的 artifacts 释放存储空间
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete old artifacts
+        uses: c-hive/gha-remove-artifacts@v1
+        with:
+          age: '1 day'
+          skip-tags: true
+          skip-recent: 2
+
   build:
+    needs: cleanup
     strategy:
       matrix:
         include:
@@ -47,7 +59,7 @@ jobs:
             dist/*.exe
             dist/*.dmg
             dist/*.zip
-          retention-days: 30
+          retention-days: 3
 
   # 创建 Release（仅在推送 tag 时）
   release:
