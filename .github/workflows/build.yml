@@ -53,14 +53,12 @@ jobs:
           echo "=== dist directory contents ==="
           ls -la dist/
           TAG_NAME="manual-build-${{ github.run_number }}-${{ matrix.os }}"
-          # 找到可分发的安装包文件
-          FILES=$(find dist -maxdepth 1 -type f \( -name "*.exe" -o -name "*.zip" -o -name "*.dmg" -o -name "*.AppImage" \) | tr '\n' ' ')
-          echo "Files to upload: $FILES"
-          if [ -n "$FILES" ]; then
-            gh release create "$TAG_NAME" --title "Manual Build ${{ github.run_number }} (${{ matrix.os }})" --draft --notes "Manual build" $FILES
-          else
-            echo "No distributable files found!"
-          fi
+          # 找到可分发的安装包文件，处理中文和空格
+          gh release create "$TAG_NAME" --title "Manual Build ${{ github.run_number }} (${{ matrix.os }})" --draft --notes "Manual build"
+          find dist -maxdepth 1 -type f \( -name "*.exe" -o -name "*.zip" -o -name "*.dmg" -o -name "*.AppImage" \) -print0 | while IFS= read -r -d '' file; do
+            echo "Uploading: $file"
+            gh release upload "$TAG_NAME" "$file" --clobber
+          done
 
       # tag 触发时上传到 GitHub Release
       - name: Upload to GitHub Release (tag only)
