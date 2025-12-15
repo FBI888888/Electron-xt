@@ -43,20 +43,15 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: npm run build:mac -- --publish never -c.mac.target=zip
 
-      # 手动触发时上传到 Artifacts（可在 Actions Summary 下载）
-      - name: Upload artifacts (manual trigger)
-        if: github.event_name == 'workflow_dispatch'
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-${{ matrix.os }}
-          path: dist/**
-          retention-days: 7
-
-      # tag 触发时上传到 GitHub Release
-      - name: Upload to GitHub Release (tag only)
-        if: startsWith(github.ref, 'refs/tags/')
+      # 统一上传到 GitHub Release（绕过 Artifact 配额限制）
+      # 手动触发时创建 draft release，tag 触发时创建正式 release
+      - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('build-{0}', github.run_number) }}
+          name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('Build #{0}', github.run_number) }}
+          draft: ${{ github.event_name == 'workflow_dispatch' }}
+          prerelease: ${{ github.event_name == 'workflow_dispatch' }}
           files: |
             dist/**
           fail_on_unmatched_files: true
