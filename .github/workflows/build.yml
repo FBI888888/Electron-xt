@@ -41,7 +41,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-        run: npm run build:mac -- --publish never
+        run: npm run build:mac -- --publish never -c.mac.target=zip
 
       # Artifact quota 触顶时，upload-artifact 会直接失败。
       # 这里改为：打 tag 时直接上传构建产物到 GitHub Release（不占用 Actions Artifacts 配额）
