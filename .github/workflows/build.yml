@@ -43,16 +43,15 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: npm run build:mac -- --publish never -c.mac.target=zip
 
-      # 手动触发时上传到 draft Release（不占用 Artifact 配额）
+      # 手动触发时上传到 draft Release（使用 gh cli）
       - name: Upload to draft Release (manual trigger)
         if: github.event_name == 'workflow_dispatch'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: manual-build-${{ github.run_number }}-${{ matrix.os }}
-          name: Manual Build ${{ github.run_number }} (${{ matrix.os }})
-          draft: true
-          files: |
-            dist/**
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG_NAME="manual-build-${{ github.run_number }}-${{ matrix.os }}"
+          gh release create "$TAG_NAME" --title "Manual Build ${{ github.run_number }} (${{ matrix.os }})" --draft --notes "Manual build" dist/* || true
+          gh release upload "$TAG_NAME" dist/* --clobber || true
 
       # tag 触发时上传到 GitHub Release
       - name: Upload to GitHub Release (tag only)
