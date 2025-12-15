@@ -43,25 +43,12 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: npm run build:mac -- --publish never
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-${{ matrix.os }}
-          path: dist/**
-          if-no-files-found: error
-
-  release:
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Create GitHub Release
+      # Artifact quota 触顶时，upload-artifact 会直接失败。
+      # 这里改为：打 tag 时直接上传构建产物到 GitHub Release（不占用 Actions Artifacts 配额）
+      - name: Upload to GitHub Release (tag only)
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            artifacts/**
+            dist/**
+          fail_on_unmatched_files: true
