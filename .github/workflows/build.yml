@@ -1,70 +1,78 @@
 name: Build Electron App
 
 on:
+  # 手动触发
   workflow_dispatch:
+  # 推送到 main 分支时触发
   push:
+    branches: [ main ]
     tags:
-      - 'v*'
-
-permissions:
-  contents: write
+      - 'v*'  # 推送版本标签时触发，如 v1.0.0
 
 jobs:
   build:
     strategy:
-      fail-fast: false
       matrix:
-        os: [windows-latest, macos-latest]
+        include:
+          - os: windows-latest
+            platform: win
+          - os: macos-latest
+            platform: mac
 
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: '18'
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build (Windows)
-        if: matrix.os == 'windows-latest'
+      - name: Build for ${{ matrix.platform }}
+        run: npm run build:${{ matrix.platform }}
         env:
-          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-        run: npm run build:win -- --publish never
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build (macOS)
-        if: matrix.os == 'macos-latest'
-        env:
-          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-        run: npm run build:mac -- --publish never -c.mac.target=zip
-
-      # 手动触发时上传到 draft Release（使用 gh cli）
-      - name: Upload to draft Release (manual trigger)
-        if: github.event_name == 'workflow_dispatch'
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          echo "=== dist directory contents ==="
-          ls -la dist/
-          TAG_NAME="manual-build-${{ github.run_number }}-${{ matrix.os }}"
-          # 找到可分发的安装包文件，处理中文和空格
-          gh release create "$TAG_NAME" --title "Manual Build ${{ github.run_number }} (${{ matrix.os }})" --draft --notes "Manual build"
-          find dist -maxdepth 1 -type f \( -name "*.exe" -o -name "*.zip" -o -name "*.dmg" -o -name "*.AppImage" \) -print0 | while IFS= read -r -d '' file; do
-            echo "Uploading: $file"
-            gh release upload "$TAG_NAME" "$file" --clobber
-          done
-
-      # tag 触发时上传到 GitHub Release
-      - name: Upload to GitHub Release (tag only)
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          files: |
-            dist/**
-          fail_on_unmatched_files: true
+          name: release-${{ matrix.platform }}
+          path: |
+            dist/*.exe
+            dist/*.dmg
+            dist/*.zip
+          retention-days: 30
+
+  # 创建 Release（仅在推送 tag 时）
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-win
+          path: dist
+
+      - name: Download Mac artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-mac
+          path: dist
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

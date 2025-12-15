@@ -46,8 +46,6 @@ function getAppRootPath() {
 function createWindow() {
     // 移除菜单栏
     Menu.setApplicationMenu(null);
-
-    const iconPath = process.platform === 'win32' ? path.join(getAppRootPath(), 'logo.ico') : undefined;
     
     // 获取屏幕尺寸，窗口占70%
     const { screen } = require('electron');
@@ -62,14 +60,14 @@ function createWindow() {
         height: windowHeight,
         minWidth: 1000,
         minHeight: 700,
+        icon: path.join(__dirname, 'logo.ico'),
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
         },
         titleBarStyle: 'default',
         show: false,
-        autoHideMenuBar: true,
-        icon: iconPath
+        autoHideMenuBar: true
     });
 
     mainWindow.loadFile('index.html');
@@ -86,21 +84,19 @@ function createWindow() {
 // 创建激活窗口
 function createActivationWindow() {
     Menu.setApplicationMenu(null);
-
-    const iconPath = process.platform === 'win32' ? path.join(getAppRootPath(), 'logo.ico') : undefined;
     
     activationWindow = new BrowserWindow({
         width: 520,
         height: 700,
         resizable: false,
+        icon: path.join(__dirname, 'logo.ico'),
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
         },
         titleBarStyle: 'default',
         show: false,
-        autoHideMenuBar: true,
-        icon: iconPath
+        autoHideMenuBar: true
     });
 
     activationWindow.loadFile('activation.html');
