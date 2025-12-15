@@ -9,17 +9,39 @@ on:
     tags:
       - 'v*'  # 推送版本标签时触发，如 v1.0.0
 
+permissions:
+  contents: write
+  actions: write
+
 jobs:
   # 清理旧的 artifacts 释放存储空间
   cleanup:
     runs-on: ubuntu-latest
     steps:
       - name: Delete old artifacts
-        uses: c-hive/gha-remove-artifacts@v1
+        uses: actions/github-script@v7
         with:
-          age: '1 day'
-          skip-tags: true
-          skip-recent: 2
+          script: |
+            const res = await github.rest.actions.listArtifactsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100
+            });
+            
+            const now = Date.now();
+            const oneDay = 24 * 60 * 60 * 1000;
+            
+            for (const artifact of res.data.artifacts) {
+              const createdAt = new Date(artifact.created_at).getTime();
+              if (now - createdAt > oneDay) {
+                console.log(`Deleting artifact: ${artifact.name} (${artifact.id})`);
+                await github.rest.actions.deleteArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: artifact.id
+                });
+              }
+            }
 
   build:
     needs: cleanup
