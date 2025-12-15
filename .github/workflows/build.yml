@@ -50,9 +50,17 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          echo "=== dist directory contents ==="
+          ls -la dist/
           TAG_NAME="manual-build-${{ github.run_number }}-${{ matrix.os }}"
-          gh release create "$TAG_NAME" --title "Manual Build ${{ github.run_number }} (${{ matrix.os }})" --draft --notes "Manual build" dist/* || true
-          gh release upload "$TAG_NAME" dist/* --clobber || true
+          # 找到可分发的安装包文件
+          FILES=$(find dist -maxdepth 1 -type f \( -name "*.exe" -o -name "*.zip" -o -name "*.dmg" -o -name "*.AppImage" \) | tr '\n' ' ')
+          echo "Files to upload: $FILES"
+          if [ -n "$FILES" ]; then
+            gh release create "$TAG_NAME" --title "Manual Build ${{ github.run_number }} (${{ matrix.os }})" --draft --notes "Manual build" $FILES
+          else
+            echo "No distributable files found!"
+          fi
 
       # tag 触发时上传到 GitHub Release
       - name: Upload to GitHub Release (tag only)
