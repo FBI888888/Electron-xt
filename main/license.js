@@ -29,6 +29,9 @@ const HEARTBEAT_INTERVAL = 5 * 60 * 1000;
 // 加密密钥 (与服务端保持一致)
 const CLIENT_KEY = 'xingtu-client-secret-key-2024';
 
+// 客户端请求签名密钥 (与服务端 CLIENT_REQUEST_KEY 保持一致)
+const CLIENT_REQUEST_KEY = process.env.CLIENT_REQUEST_KEY || 'xhs-client-secret-key-2024';
+
 // ==================== 机器码生成 ====================
 
 /**
@@ -228,6 +231,11 @@ function sendRequest(path, data) {
     return new Promise((resolve, reject) => {
         const timestamp = Date.now();
         const postData = JSON.stringify(data);
+
+        const payload = `${postData}.${timestamp}`;
+        const signature = crypto.createHmac('sha256', CLIENT_REQUEST_KEY)
+            .update(payload)
+            .digest('hex');
         
         // ========== DEBUG: 打印请求内容 ==========
         console.log('\n========== 鉴权请求 ==========');
@@ -244,6 +252,7 @@ function sendRequest(path, data) {
                 'Content-Type': 'application/json',
                 'Content-Length': Buffer.byteLength(postData),
                 'X-Timestamp': timestamp.toString(),
+                'X-Signature': signature,
                 'User-Agent': 'Xingtu-Client/1.0'
             },
             timeout: 10000
@@ -257,6 +266,44 @@ function sendRequest(path, data) {
             res.on('end', () => {
                 try {
                     const result = JSON.parse(body);
+
+                    if (result && result.success && result.data) {
+                        if (!result.signature) {
+                            resolve({
+                                success: false,
+                                code: 'MISSING_SERVER_SIGNATURE',
+                                message: '鉴权响应缺少签名'
+                            });
+                            return;
+                        }
+
+                        const expectedSig = crypto.createHmac('sha256', CLIENT_REQUEST_KEY)
+                            .update(JSON.stringify(result.data))
+                            .digest('hex');
+
+                        try {
+                            const ok = crypto.timingSafeEqual(
+                                Buffer.from(expectedSig),
+                                Buffer.from(result.signature)
+                            );
+                            if (!ok) {
+                                resolve({
+                                    success: false,
+                                    code: 'INVALID_SERVER_SIGNATURE',
+                                    message: '鉴权响应签名校验失败'
+                                });
+                                return;
+                            }
+                        } catch (e) {
+                            resolve({
+                                success: false,
+                                code: 'INVALID_SERVER_SIGNATURE',
+                                message: '鉴权响应签名校验失败'
+                            });
+                            return;
+                        }
+                    }
+
                     // ========== DEBUG: 打印响应内容 ==========
                     console.log('\n========== 鉴权响应 ==========');
                     console.log('响应数据:', JSON.stringify(result, null, 2));
@@ -414,6 +461,7 @@ function getLicenseInfo() {
         system_type: licenseData.system_type,
         member_level: licenseData.member_level,
         expire_at: licenseData.expire_at,
+        last_verify: licenseData.last_verify,
         days_remaining: licenseData.expire_at 
             ? Math.max(0, Math.ceil((new Date(licenseData.expire_at) - new Date()) / (1000 * 60 * 60 * 24)))
             : 0

@@ -9,6 +9,64 @@ const license = require('./main/license');
 let mainWindow;
 let activationWindow;
 
+let isAuthorized = false;
+let lastAuthAt = 0;
+
+const OFFLINE_GRACE_MS = 24 * 60 * 60 * 1000;
+const AUTH_CACHE_MS = 2 * 60 * 1000;
+
+function getLastVerifyAtMs() {
+    try {
+        const info = license.getLicenseInfo();
+        const raw = info && info.last_verify ? info.last_verify : null;
+        const t = raw ? new Date(raw).getTime() : 0;
+        return Number.isFinite(t) ? t : 0;
+    } catch (e) {
+        return 0;
+    }
+}
+
+async function ensureAuthorized() {
+    if (isAuthorized && (Date.now() - lastAuthAt) < AUTH_CACHE_MS) {
+        return { success: true };
+    }
+
+    const result = await license.verify();
+    if (result && result.success) {
+        isAuthorized = true;
+        lastAuthAt = Date.now();
+        return { success: true };
+    }
+
+    if (result && result.code === 'NETWORK_ERROR') {
+        const info = license.getLicenseInfo();
+        const lastVerifyAt = getLastVerifyAtMs();
+        const withinGrace = lastVerifyAt > 0 && (Date.now() - lastVerifyAt) <= OFFLINE_GRACE_MS;
+        if (info && info.days_remaining > 0 && withinGrace) {
+            isAuthorized = true;
+            lastAuthAt = Date.now();
+            return { success: true, offline: true };
+        }
+    }
+
+    isAuthorized = false;
+    lastAuthAt = 0;
+    return { success: false, message: (result && result.message) ? result.message : '未授权' };
+}
+
+function wrapAuth(handler, options = {}) {
+    const { returnBoolean = false, unauthorizedReturn } = options;
+    return async (event, ...args) => {
+        const auth = await ensureAuthorized();
+        if (!auth.success) {
+            if (unauthorizedReturn !== undefined) return unauthorizedReturn;
+            if (returnBoolean) return false;
+            return { success: false, message: auth.message || '未授权' };
+        }
+        return await handler(event, ...args);
+    };
+}
+
 // 全局拦截外部协议（例如 bytedance://）以避免触发系统弹窗
 app.on('web-contents-created', (event, contents) => {
     try {
@@ -116,8 +174,8 @@ function createActivationWindow() {
 
 // 应用启动流程
 app.whenReady().then(async () => {
-    // 设置激活数据存储路径
-    license.setDataPath(app.getPath('userData'));
+    // 设置激活数据存储路径（使用安装目录，不存到C盘）
+    license.setDataPath(getAppRootPath());
     
     // 检查激活状态 - 必须连接服务器验证
     const verifyResult = await license.verify();
@@ -133,12 +191,16 @@ app.whenReady().then(async () => {
                     message: result.message || '您的授权已失效，请重新激活',
                     buttons: ['确定']
                 }).then(() => {
+                    isAuthorized = false;
+                    lastAuthAt = 0;
                     license.stopHeartbeat();
                     mainWindow.close();
                     createActivationWindow();
                 });
             }
         });
+        isAuthorized = true;
+        lastAuthAt = Date.now();
         createWindow();
     } else if (verifyResult.code === 'NETWORK_ERROR') {
         // 无法连接鉴权服务器
@@ -215,7 +277,7 @@ ipcMain.handle('read-file', async (event, filePath) => {
     }
 });
 
-ipcMain.handle('write-file', async (event, filePath, content) => {
+ipcMain.handle('write-file', wrapAuth(async (event, filePath, content) => {
     try {
         const dir = path.dirname(filePath);
         if (!fs.existsSync(dir)) {
@@ -226,14 +288,34 @@ ipcMain.handle('write-file', async (event, filePath, content) => {
     } catch (err) {
         return { success: false, error: err.message };
     }
-});
+}));
+
+ipcMain.handle('write-binary-file', wrapAuth(async (event, filePath, buffer) => {
+    try {
+        if (!filePath) {
+            return { success: false, error: 'filePath为空' };
+        }
+
+        const dir = path.dirname(filePath);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+
+        const data = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+        fs.writeFileSync(filePath, data);
+        return { success: true };
+    } catch (err) {
+        return { success: false, error: err.message };
+    }
+}));
 
 ipcMain.handle('file-exists', async (event, filePath) => {
     return fs.existsSync(filePath);
 });
 
 ipcMain.handle('get-user-data-path', () => {
-    return app.getPath('userData');
+    // 返回安装目录，不使用C盘的userData
+    return getAppRootPath();
 });
 
 ipcMain.handle('get-documents-path', () => {
@@ -250,27 +332,27 @@ const bloggerApi = require('./main/api');
 const xingtuApi = require('./main/xingtuApi');
 
 // 采集达人信息 - 基础框架，后续补充具体实现
-ipcMain.handle('collect-blogger-info', async (event, userId, cookies) => {
+ipcMain.handle('collect-blogger-info', wrapAuth(async (event, userId, cookies) => {
     return await bloggerApi.getBloggerInfo(userId, cookies);
-});
+}));
 
 // 采集数据概览 - 基础框架
-ipcMain.handle('collect-data-summary', async (event, userId, cookies) => {
+ipcMain.handle('collect-data-summary', wrapAuth(async (event, userId, cookies) => {
     return await bloggerApi.getDataSummary(userId, cookies);
-});
+}));
 
 // 星图采集 - 采集单个博主数据
-ipcMain.handle('collect-xingtu-blogger', async (event, authorId, cookies, selectedFields) => {
+ipcMain.handle('collect-xingtu-blogger', wrapAuth(async (event, authorId, cookies, selectedFields) => {
     return await xingtuApi.collectBloggerData(authorId, cookies, selectedFields);
-});
+}));
 
 // 星图采集 - 通过抖音主页URL搜索获取authorId
-ipcMain.handle('search-author-by-douyin-url', async (event, douyinUrl, cookies) => {
+ipcMain.handle('search-author-by-douyin-url', wrapAuth(async (event, douyinUrl, cookies) => {
     return await xingtuApi.searchAuthorByDouyinUrl(douyinUrl, cookies);
-});
+}));
 
 // HTTP 请求处理 - 用于验证账号（使用grade_info接口）
-ipcMain.handle('check-account', async (event, cookies) => {
+ipcMain.handle('check-account', wrapAuth(async (event, cookies) => {
     return new Promise((resolve) => {
         const options = {
             hostname: 'www.xingtu.cn',
@@ -341,7 +423,7 @@ ipcMain.handle('check-account', async (event, cookies) => {
 
         req.end();
     });
-});
+}));
 
 // ==================== 达人列表功能 ====================
 
@@ -350,7 +432,7 @@ let capturedRequest = null;
 let bloggerSessionCounter = 0;
 
 // 打开达人广场浏览器窗口
-ipcMain.handle('open-blogger-browser', async (event, cookies) => {
+ipcMain.handle('open-blogger-browser', wrapAuth(async (event, cookies) => {
     if (bloggerWindow && !bloggerWindow.isDestroyed()) {
         bloggerWindow.focus();
         return { success: true, message: '窗口已打开' };
@@ -440,15 +522,15 @@ ipcMain.handle('open-blogger-browser', async (event, cookies) => {
     });
     
     return { success: true, message: '浏览器窗口已打开' };
-});
+}));
 
 // 获取捕获的请求
-ipcMain.handle('get-captured-request', () => {
+ipcMain.handle('get-captured-request', wrapAuth(() => {
     return capturedRequest;
-});
+}, { unauthorizedReturn: null }));
 
 // 使用捕获的请求参数获取达人列表
-ipcMain.handle('fetch-blogger-list', async (event, pageNum, capturedReq) => {
+ipcMain.handle('fetch-blogger-list', wrapAuth(async (event, pageNum, capturedReq) => {
     return new Promise((resolve) => {
         try {
             // 修改分页参数
@@ -531,22 +613,22 @@ ipcMain.handle('fetch-blogger-list', async (event, pageNum, capturedReq) => {
             });
         }
     });
-});
+}));
 
 // 关闭达人广场窗口
-ipcMain.handle('close-blogger-browser', () => {
+ipcMain.handle('close-blogger-browser', wrapAuth(() => {
     if (bloggerWindow && !bloggerWindow.isDestroyed()) {
         bloggerWindow.close();
         bloggerWindow = null;
     }
     capturedRequest = null;
     return { success: true };
-});
+}));
 
 // ==================== 链接转换功能 ====================
 
 // 解析抖音短链接获取抖音主页URL
-ipcMain.handle('resolve-douyin-short-link', async (event, shortUrl) => {
+ipcMain.handle('resolve-douyin-short-link', wrapAuth(async (event, shortUrl) => {
     return new Promise((resolve) => {
         try {
             console.log('[LinkConvert][Main] resolve-douyin-short-link start:', shortUrl);
@@ -657,13 +739,13 @@ ipcMain.handle('resolve-douyin-short-link', async (event, shortUrl) => {
             resolve({ success: false, message: e.message });
         }
     });
-});
+}));
 
 // 通过抖音主页获取星图作者ID
-ipcMain.handle('search-xingtu-author', async (event, douyinUrl, cookies) => {
+ipcMain.handle('search-xingtu-author', wrapAuth(async (event, douyinUrl, cookies) => {
     const xingtuApi = require('./main/xingtuApi');
     return await xingtuApi.searchAuthorByDouyinUrl(douyinUrl, cookies);
-});
+}));
 
 // ==================== 登录功能 ====================
 
@@ -942,7 +1024,7 @@ ipcMain.handle('close-login-window', () => {
 
 // 打开达人详情页
 let detailSessionCounter = 0;
-ipcMain.handle('open-blogger-detail', async (event, url, cookies) => {
+ipcMain.handle('open-blogger-detail', wrapAuth(async (event, url, cookies) => {
     detailSessionCounter++;
     const partition = `memory-detail-${Date.now()}-${detailSessionCounter}`;
     const { session } = require('electron');
@@ -986,7 +1068,7 @@ ipcMain.handle('open-blogger-detail', async (event, url, cookies) => {
     
     detailWindow.loadURL(url);
     return { success: true };
-});
+}));
 
 // ==================== 激活码验证 API ====================
 
@@ -1044,8 +1126,8 @@ ipcMain.handle('is-svip', () => {
 
 // 进入主程序 (从激活窗口)
 ipcMain.handle('enter-main-app', async () => {
-    const result = await license.verify();
-    if (result.success) {
+    const auth = await ensureAuthorized();
+    if (auth.success) {
         license.startHeartbeat((expiredResult) => {
             if (mainWindow && !mainWindow.isDestroyed()) {
                 dialog.showMessageBox(mainWindow, {
@@ -1054,12 +1136,17 @@ ipcMain.handle('enter-main-app', async () => {
                     message: expiredResult.message || '您的授权已失效',
                     buttons: ['确定']
                 }).then(() => {
+                    isAuthorized = false;
+                    lastAuthAt = 0;
                     license.stopHeartbeat();
                     mainWindow.close();
                     createActivationWindow();
                 });
             }
         });
+
+        isAuthorized = true;
+        lastAuthAt = Date.now();
         
         if (activationWindow && !activationWindow.isDestroyed()) {
             activationWindow.close();
@@ -1067,5 +1154,5 @@ ipcMain.handle('enter-main-app', async () => {
         createWindow();
         return { success: true };
     }
-    return { success: false, message: '验证失败' };
+    return { success: false, message: auth.message || '验证失败' };
 });

@@ -1,7 +1,7 @@
 {
   "name": "xingtu-collector",
-  "version": "1.0.0",
-  "description": "星图达人采集管理系统 V1.0.0",
+  "version": "1.1.0",
+  "description": "星图达人采集管理系统 V1.1.0",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -33,15 +33,7 @@
       "renderer/**/*",
       "main/**/*",
       "styles/**/*",
-      "data/**/*",
       "node_modules/**/*"
-    ],
-    "extraResources": [
-      {
-        "from": "data",
-        "to": "data",
-        "filter": ["**/*"]
-      }
     ],
     "win": {
       "target": [
@@ -79,6 +71,7 @@
       "createStartMenuShortcut": true,
       "shortcutName": "星图达人采集系统"
     },
+    "compression": "normal",
     "asar": true
   }
 }

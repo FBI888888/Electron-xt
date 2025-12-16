@@ -48,6 +48,10 @@ JWT_ADMIN_SECRET=修改为你的管理员密钥
 # 加密密钥
 ENCRYPTION_KEY=修改为32位随机字符串
 
+# 客户端请求/响应签名密钥 (必须与客户端 main/license.js 的 CLIENT_KEY 保持一致)
+# 用于校验客户端请求头 X-Signature，以及服务端响应字段 signature
+CLIENT_REQUEST_KEY=修改为随机字符串
+
 # 管理员初始密码
 ADMIN_PASSWORD=admin123456
 ```
@@ -92,11 +96,43 @@ npm start
 
 ### 客户端接口
 
+### 客户端请求签名 (重要)
+
+为防止请求被伪造/篡改，客户端请求必须携带以下头：
+
+- **X-Timestamp**：毫秒时间戳（服务端允许 ±5 分钟）
+- **X-Signature**：HMAC-SHA256 签名
+
+签名计算规则：
+
+```
+payload = JSON.stringify(body) + '.' + X-Timestamp
+X-Signature = HMAC_SHA256(payload, CLIENT_REQUEST_KEY)
+```
+
+若缺失或校验失败，服务端返回 `INVALID_SIGNATURE`。
+
+### 服务端响应签名 (重要)
+
+`/api/auth/activate` 与 `/api/auth/verify` 在成功时会返回：
+
+- `data`：业务数据 + `timestamp`
+- `signature`：对 `data` 的签名
+
+签名计算规则：
+
+```
+signature = HMAC_SHA256(JSON.stringify(data), CLIENT_REQUEST_KEY)
+```
+
+客户端需要校验该签名，不通过应视为鉴权失败。
+
 #### 激活激活码
 ```
 POST /api/auth/activate
 Content-Type: application/json
 X-Timestamp: 时间戳
+X-Signature: 请求签名
 
 {
     "license_key": "XXXX-XXXX-XXXX-XXXX",
@@ -110,6 +146,7 @@ X-Timestamp: 时间戳
 POST /api/auth/verify
 Content-Type: application/json
 X-Timestamp: 时间戳
+X-Signature: 请求签名
 
 {
     "license_key": "XXXX-XXXX-XXXX-XXXX",
@@ -123,6 +160,7 @@ X-Timestamp: 时间戳
 POST /api/auth/check
 Content-Type: application/json
 X-Timestamp: 时间戳
+X-Signature: 请求签名
 
 {
     "license_key": "XXXX-XXXX-XXXX-XXXX"
@@ -234,6 +272,18 @@ const AUTH_SERVER = {
     protocol: 'https'          // 改为 https
 };
 ```
+
+## 版本兼容性 / 发布顺序 (重要)
+
+由于启用了请求/响应签名校验：
+
+- **升级服务端后**，旧客户端如果不带 `X-Signature` 将无法调用鉴权接口。
+- **升级客户端后**，旧服务端如果不返回正确的 `signature`，客户端会认为鉴权失败。
+
+建议发布顺序：
+
+1. 先部署服务端（并配置 `.env` 的 `CLIENT_REQUEST_KEY`）
+2. 再发布/推送新版客户端
 
 ---
 

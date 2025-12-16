@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { License } = require('../models/License');
 const { verifyClientRequest, clientRateLimiter, activationRateLimiter } = require('../middleware/auth');
-const { generateSignature } = require('../utils/crypto');
+const { generateClientSignature } = require('../utils/crypto');
 
 /**
  * POST /api/auth/activate
@@ -39,7 +39,7 @@ router.post('/activate', activationRateLimiter, verifyClientRequest, async (req,
                 ...result.data,
                 timestamp: Date.now()
             };
-            const signature = generateSignature(responseData);
+            const signature = generateClientSignature(responseData);
 
             return res.json({
                 success: true,
@@ -89,7 +89,7 @@ router.post('/verify', clientRateLimiter, verifyClientRequest, async (req, res) 
                 ...result.data,
                 timestamp: Date.now()
             };
-            const signature = generateSignature(responseData);
+            const signature = generateClientSignature(responseData);
 
             return res.json({
                 success: true,

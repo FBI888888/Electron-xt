@@ -45,7 +45,9 @@ jobs:
 
   build:
     needs: cleanup
+    timeout-minutes: 60
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: windows-latest

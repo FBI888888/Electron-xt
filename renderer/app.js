@@ -1118,106 +1118,149 @@ async function startCollect() {
     
     const modeText = isSingleMode ? '单账号模式' : '多账户轮询';
     showToast('info', '开始采集', `${modeText}：采集 ${pendingItems.length} 个目标，使用 ${currentAccounts.length} 个账号...`);
-    
+
+    const CONCURRENCY = 2;
+    const pendingIndices = [];
     for (let i = 0; i < collectItems.length; i++) {
-        if (!isCollecting) break;
-        
-        while (isPaused && isCollecting) {
-            await sleep(150);
+        if (collectItems[i].status !== '已完成') {
+            pendingIndices.push(i);
         }
-        
-        if (!isCollecting) break;
-        
-        const item = collectItems[i];
-        if (item.status === '已完成') continue;
-        
-        // 获取当前账号
-        let account = currentAccounts[currentAccountIndex];
-        let maxCount = getMaxCollectCount(account.grade || 0);
-        let collectedCount = account.collectedCount || 0;
-        
-        // 如果当前账号已达上限，切换到下一个可用账号
-        while (collectedCount >= maxCount) {
-            currentAccountIndex = (currentAccountIndex + 1) % currentAccounts.length;
-            account = currentAccounts[currentAccountIndex];
-            maxCount = getMaxCollectCount(account.grade || 0);
-            collectedCount = account.collectedCount || 0;
-            
-            // 如果所有账号都已达上限
-            if (currentAccounts.every(a => (a.collectedCount || 0) >= getMaxCollectCount(a.grade || 0))) {
-                showToast('warning', '采集终止', '所有账号已达到最大采集次数');
-                updateCollectButtons(false);
-                return;
+    }
+
+    let currentIdx = 0;
+    const inProgressByCookies = {};
+    let noAccountToastShown = false;
+
+    function reserveAccount() {
+        if (!currentAccounts || currentAccounts.length === 0) return null;
+
+        for (let tries = 0; tries < currentAccounts.length; tries++) {
+            const account = currentAccounts[currentAccountIndex];
+            const maxCount = getMaxCollectCount(account.grade || 0);
+            const collectedCount = account.collectedCount || 0;
+            const inProgress = inProgressByCookies[account.cookies] || 0;
+
+            if (collectedCount + inProgress < maxCount) {
+                inProgressByCookies[account.cookies] = inProgress + 1;
+                currentAccountIndex = (currentAccountIndex + 1) % currentAccounts.length;
+                return account;
             }
+
+            currentAccountIndex = (currentAccountIndex + 1) % currentAccounts.length;
         }
-        
-        collectItems[i].status = `采集中...(${account.remark || account.nickName})`;
-        renderCollectTable();
-        
-        try {
-            let authorId = item.author_id;
-            
-            // 如果是抖音URL，需要先通过搜索API获取authorId
-            if (!authorId && item.url_type === 'douyin' && item.original_url) {
-                collectItems[i].status = `获取达人ID中...(${account.remark || account.nickName})`;
-                renderCollectTable();
-                
-                const searchResult = await ipcRenderer.invoke('search-author-by-douyin-url', item.original_url, account.cookies);
-                
-                if (searchResult.success && searchResult.authorId) {
-                    authorId = searchResult.authorId;
-                    collectItems[i].author_id = authorId;
-                    collectItems[i].xingtu_url = `https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/${authorId}`;
-                    if (searchResult.nickName) {
-                        collectItems[i].nickname = searchResult.nickName;
+
+        return null;
+    }
+
+    function releaseAccount(account) {
+        if (!account || !account.cookies) return;
+        const v = inProgressByCookies[account.cookies] || 0;
+        inProgressByCookies[account.cookies] = Math.max(0, v - 1);
+    }
+
+    async function worker(workerId) {
+        while (isCollecting && currentIdx < pendingIndices.length) {
+            const idx = currentIdx++;
+            if (idx >= pendingIndices.length) break;
+
+            while (isPaused && isCollecting) {
+                await sleep(150);
+            }
+
+            if (!isCollecting) break;
+
+            const itemIndex = pendingIndices[idx];
+            const item = collectItems[itemIndex];
+            if (!item || item.status === '已完成') continue;
+
+            const account = reserveAccount();
+            if (!account) {
+                if (!noAccountToastShown) {
+                    noAccountToastShown = true;
+                    showToast('warning', '采集终止', '所有账号已达到最大采集次数');
+                }
+                isCollecting = false;
+                break;
+            }
+
+            collectItems[itemIndex].status = `采集中...(${account.remark || account.nickName})`;
+            renderCollectTable();
+
+            try {
+                let authorId = item.author_id;
+
+                // 如果是抖音URL，需要先通过搜索API获取authorId
+                if (!authorId && item.url_type === 'douyin' && item.original_url) {
+                    collectItems[itemIndex].status = `获取达人ID中...(${account.remark || account.nickName})`;
+                    renderCollectTable();
+
+                    const searchResult = await ipcRenderer.invoke('search-author-by-douyin-url', item.original_url, account.cookies);
+
+                    if (searchResult.success && searchResult.authorId) {
+                        authorId = searchResult.authorId;
+                        collectItems[itemIndex].author_id = authorId;
+                        collectItems[itemIndex].xingtu_url = `https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/${authorId}`;
+                        if (searchResult.nickName) {
+                            collectItems[itemIndex].nickname = searchResult.nickName;
+                        }
+                    } else {
+                        collectItems[itemIndex].status = `失败: ${searchResult.message || '无法获取达人ID'}`;
+                        renderCollectTable();
+                        continue;
                     }
-                } else {
-                    collectItems[i].status = `失败: ${searchResult.message || '无法获取达人ID'}`;
+
+                    await sleep(150);
+                    collectItems[itemIndex].status = `采集中...(${account.remark || account.nickName})`;
+                    renderCollectTable();
+                }
+
+                if (!authorId) {
+                    collectItems[itemIndex].status = '失败: 无法获取达人ID';
                     renderCollectTable();
                     continue;
                 }
-                
-                await sleep(150);
-                collectItems[i].status = `采集中...(${account.remark || account.nickName})`;
-                renderCollectTable();
-            }
-            
-            if (!authorId) {
-                collectItems[i].status = '失败: 无法获取达人ID';
-                renderCollectTable();
-                continue;
-            }
-            
-            // 调用星图采集API
-            const result = await ipcRenderer.invoke('collect-xingtu-blogger', authorId, account.cookies, selectedFields);
-            
-            if (result.success) {
-                collectItems[i].status = '已完成';
-                collectItems[i].author_id = authorId;
-                collectItems[i].nickname = result.data['达人昵称'] || collectItems[i].nickname || '';
-                collectItems[i].fansLevel = formatFansCount(result.data['粉丝数']) || '';
-                collectItems[i].collect_time = new Date().toLocaleString('zh-CN');
-                collectItems[i].collectedData = result.data;
-                collectedData.push(result.data);
-                
-                // 更新账号已采集次数
-                const accountIndex = accounts.findIndex(a => a.cookies === account.cookies);
-                if (accountIndex >= 0) {
-                    accounts[accountIndex].collectedCount = (accounts[accountIndex].collectedCount || 0) + 1;
+
+                // 调用星图采集API
+                const result = await ipcRenderer.invoke('collect-xingtu-blogger', authorId, account.cookies, selectedFields);
+
+                if (result.success) {
+                    collectItems[itemIndex].status = '已完成';
+                    collectItems[itemIndex].author_id = authorId;
+                    collectItems[itemIndex].nickname = result.data['达人昵称'] || collectItems[itemIndex].nickname || '';
+                    collectItems[itemIndex].fansLevel = formatFansCount(result.data['粉丝数']) || '';
+                    collectItems[itemIndex].collect_time = new Date().toLocaleString('zh-CN');
+                    collectItems[itemIndex].collectedData = result.data;
+                    collectedData.push(result.data);
+
+                    // 更新账号已采集次数
+                    const accountIndex = accounts.findIndex(a => a.cookies === account.cookies);
+                    if (accountIndex >= 0) {
+                        accounts[accountIndex].collectedCount = (accounts[accountIndex].collectedCount || 0) + 1;
+                    }
+                    account.collectedCount = (account.collectedCount || 0) + 1;
+                } else {
+                    collectItems[itemIndex].status = `失败: ${result.errors?.join('; ') || '未知错误'}`;
                 }
-                account.collectedCount = (account.collectedCount || 0) + 1;
-            } else {
-                collectItems[i].status = `失败: ${result.errors?.join('; ') || '未知错误'}`;
+            } catch (err) {
+                collectItems[itemIndex].status = `失败: ${err.message}`;
+            } finally {
+                releaseAccount(account);
             }
-        } catch (err) {
-            collectItems[i].status = `失败: ${err.message}`;
+
+            renderCollectTable();
+            await sleep(80);
         }
-        
-        renderCollectTable();
-        
-        // 切换账号
-        currentAccountIndex = (currentAccountIndex + 1) % currentAccounts.length;
     }
+
+    const workers = [];
+    for (let i = 0; i < CONCURRENCY; i++) {
+        workers.push(worker(i + 1));
+        if (i < CONCURRENCY - 1) {
+            await sleep(300);
+        }
+    }
+
+    await Promise.all(workers);
     
     // 保存账号采集次数
     await saveJsonData(ACCOUNTS_FILE, accounts);
@@ -1378,8 +1421,18 @@ async function saveToExcel() {
         const ws = XLSX.utils.json_to_sheet(exportData, { header });
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, '采集数据');
-        XLSX.writeFile(wb, savePath);
-        
+
+        const buffer = XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' });
+        const writeResult = await ipcRenderer.invoke('write-binary-file', savePath, buffer);
+        if (!writeResult || !writeResult.success) {
+            throw new Error(writeResult?.error || '写入文件失败');
+        }
+
+        const exists = await ipcRenderer.invoke('file-exists', savePath);
+        if (!exists) {
+            throw new Error('写入完成但未检测到文件');
+        }
+
         showToast('success', '保存成功', `已保存 ${completedItems.length} 条数据到: ${savePath}`);
     } catch (err) {
         showToast('error', '保存失败', `保存Excel失败: ${err.message}`);
@@ -1717,6 +1770,7 @@ function addLinkConvertItem(originalLine) {
         original: originalLine,
         extractedUrl: url,
         douyinUrl: isDouyinUserUrl(url) ? url : '',
+        xingtuNickName: '',
         xingtuUrl: '',
         status: 'pending',
         error: ''
@@ -1882,15 +1936,16 @@ async function convertSingleItem(item, index, cookies, maxRetries = 3) {
                 }
             }
             
-            // 步骤2: 通过抖音主页获取星图作者ID
+            // 步骤2: 通过抖音主页获取星图作者ID + 星图昵称
             if (item.douyinUrl && !item.xingtuUrl) {
                 logLinkConvert(`[${index}] 搜索星图authorId (尝试${attempt + 1})`, { douyinUrl: item.douyinUrl });
                 const searchResult = await ipcRenderer.invoke('search-xingtu-author', item.douyinUrl, cookies);
                 logLinkConvert(`[${index}] 星图搜索返回`, searchResult);
                 if (searchResult.success && searchResult.authorId) {
                     item.xingtuUrl = `https://www.xingtu.cn/ad/creator/author-homepage/douyin-video/${searchResult.authorId}`;
+                    item.xingtuNickName = searchResult.nickName || '';
                     item.status = 'success';
-                    logLinkConvert(`[${index}] 转换成功`, { douyinUrl: item.douyinUrl, xingtuUrl: item.xingtuUrl });
+                    logLinkConvert(`[${index}] 转换成功`, { douyinUrl: item.douyinUrl, xingtuUrl: item.xingtuUrl, xingtuNickName: item.xingtuNickName });
                     return true;
                 } else {
                     throw new Error(searchResult.message || '未找到星图达人');
@@ -2044,6 +2099,7 @@ async function manualConvertLink(index) {
 
     item.status = 'processing';
     item.error = '';
+    item.xingtuNickName = '';
     item.xingtuUrl = '';
     renderLinkConvertList();
 
@@ -2096,7 +2152,7 @@ function renderLinkConvertList() {
     if (linkConvertList.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="5" style="text-align: center; padding: 40px; color: #999;">
+                <td colspan="6" style="text-align: center; padding: 40px; color: #999;">
                     暂无数据，请导入链接文件
                 </td>
             </tr>
@@ -2135,6 +2191,7 @@ function renderLinkConvertList() {
                 <td><span class="${statusClass}">${statusText}</span></td>
                 <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left;" title="${item.original}">${item.original}</td>
                 <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left;" title="${item.douyinUrl || item.error || ''}">${item.douyinUrl || (item.error ? `<span style="color: red;">${item.error}</span>` : '-')}</td>
+                <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left;" title="${item.xingtuNickName || ''}">${item.xingtuNickName || '-'}</td>
                 <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left;">${item.xingtuUrl ? `<a href="${item.xingtuUrl}" target="_blank" style="color: #007bff;">${item.xingtuUrl}</a>` : '-'}</td>
             </tr>
         `;
@@ -2186,6 +2243,7 @@ async function exportLinkConvertList() {
             '状态': item.status === 'success' ? '成功' : item.status === 'failed' ? '失败' : '待转换',
             '原始链接': item.original,
             '抖音主页': item.douyinUrl || '',
+            '星图昵称': item.xingtuNickName || '',
             '星图主页': item.xingtuUrl || '',
             '错误信息': item.error || ''
         }));

@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
+const { verifyClientSignature } = require('../utils/crypto');
+
 const JWT_SECRET = process.env.JWT_SECRET || 'default-jwt-secret';
 const JWT_ADMIN_SECRET = process.env.JWT_ADMIN_SECRET || 'default-admin-jwt-secret';
 
@@ -28,6 +30,24 @@ function verifyClientRequest(req, res, next) {
             success: false,
             code: 'INVALID_TIMESTAMP',
             message: '请求已过期'
+        });
+    }
+
+    if (!signature) {
+        return res.status(400).json({
+            success: false,
+            code: 'MISSING_SIGNATURE',
+            message: '缺少签名'
+        });
+    }
+
+    const payload = `${JSON.stringify(req.body || {})}.${timestamp}`;
+    const ok = verifyClientSignature(payload, signature);
+    if (!ok) {
+        return res.status(401).json({
+            success: false,
+            code: 'INVALID_SIGNATURE',
+            message: '签名校验失败'
         });
     }
 

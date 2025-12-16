@@ -3,6 +3,7 @@ const CryptoJS = require('crypto-js');
 require('dotenv').config();
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'default-32-char-encryption-key!';
+const CLIENT_REQUEST_KEY = process.env.CLIENT_REQUEST_KEY || 'xhs-client-secret-key-2024';
 
 /**
  * 生成激活码
@@ -59,6 +60,28 @@ function generateSignature(data) {
 }
 
 /**
+ * 客户端请求/响应签名 (用于客户端 <-> 服务端防篡改)
+ */
+function generateClientSignature(data) {
+    const str = typeof data === 'string' ? data : JSON.stringify(data);
+    return crypto.createHmac('sha256', CLIENT_REQUEST_KEY)
+        .update(str)
+        .digest('hex');
+}
+
+function verifyClientSignature(data, signature) {
+    const expectedSig = generateClientSignature(data);
+    try {
+        return crypto.timingSafeEqual(
+            Buffer.from(expectedSig),
+            Buffer.from(signature)
+        );
+    } catch (e) {
+        return false;
+    }
+}
+
+/**
  * 验证签名
  */
 function verifySignature(data, signature) {
@@ -98,6 +121,8 @@ module.exports = {
     verifyMachineCode,
     generateSignature,
     verifySignature,
+    generateClientSignature,
+    verifyClientSignature,
     encrypt,
     decrypt,
     generateToken
