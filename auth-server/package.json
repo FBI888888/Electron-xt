@@ -1,6 +1,6 @@
 {
   "name": "auth-server",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "软件鉴权服务端 - 支持多系统(小红书/星图)",
   "main": "src/app.js",
   "scripts": {

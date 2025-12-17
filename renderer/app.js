@@ -25,6 +25,55 @@ function formatFansCount(count) {
     return (num / 10000).toFixed(1) + 'w';
 }
 
+function normalizePortraitDistributionText(input, options = {}) {
+    const {
+        decimals = 1,
+        mapKeys = null,
+    } = options;
+
+    if (input === null || input === undefined) return '';
+    const str = String(input).trim();
+    if (!str) return '';
+    if (/%/.test(str) && !/[：:]/.test(str)) return str;
+
+    const parts = str.split(/[、，,;；]\s*/).map(s => s.trim()).filter(Boolean);
+    if (parts.length === 0) return str;
+
+    const items = [];
+    for (const p of parts) {
+        const kv = p.split(/[：:]/);
+        if (kv.length < 2) return str;
+        const rawKey = String(kv[0]).trim();
+        const rawValStr = String(kv.slice(1).join(':')).trim();
+        const valHasPercent = /%/.test(rawValStr);
+        const rawNum = Number(rawValStr.replace('%', '').trim());
+        const val = Number.isFinite(rawNum) ? rawNum : 0;
+        const key = mapKeys && Object.prototype.hasOwnProperty.call(mapKeys, rawKey) ? mapKeys[rawKey] : rawKey;
+        items.push({ key, value: val, hasPercent: valHasPercent });
+    }
+
+    const values = items.map(i => i.value);
+    const allPercent = items.every(i => i.hasPercent);
+    const sum = values.reduce((a, b) => a + (Number.isFinite(b) ? b : 0), 0);
+    if (sum <= 0) return str;
+
+    let mode = 'count';
+    if (!allPercent && sum <= 1.0000001 && values.every(v => v >= 0 && v <= 1.0000001)) {
+        mode = 'ratio';
+    } else if (allPercent || (sum <= 100.0000001 && values.every(v => v >= 0 && v <= 100.0000001))) {
+        mode = 'percent';
+    }
+
+    return items.map((it) => {
+        const pct = mode === 'ratio'
+            ? it.value * 100
+            : mode === 'percent'
+                ? it.value
+                : (it.value / sum) * 100;
+        return `${it.key}${pct.toFixed(decimals)}%`;
+    }).join('、');
+}
+
 // Toast 消息提示
 function showToast(type, title, message, duration = 3000) {
     const container = document.getElementById('toast-container');
@@ -1407,8 +1456,19 @@ async function saveToExcel() {
             row['内容主题'] = data['内容主题'] || '';
 
             // 后面的字段保持顺序不动（按首次出现顺序），并移除 authorId
+            // 对用户画像分布字段做格式化处理
+            const genderKeyMap = { male: '男性', female: '女性' };
             extraKeys.forEach((k) => {
-                row[k] = data[k] !== undefined ? data[k] : '';
+                let value = data[k] !== undefined ? data[k] : '';
+                
+                // 对用户画像字段做兜底格式化
+                if (k === '用户画像-性别分布') {
+                    value = normalizePortraitDistributionText(value, { decimals: 2, mapKeys: genderKeyMap });
+                } else if (k && k.startsWith('用户画像-')) {
+                    value = normalizePortraitDistributionText(value, { decimals: 1 });
+                }
+                
+                row[k] = value;
             });
 
             // 采集时间放在后续字段区域（不参与前置字段顺序）

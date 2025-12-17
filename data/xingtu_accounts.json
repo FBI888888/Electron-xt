@@ -4,35 +4,8 @@
     "nickName": "东风日产-2024",
     "grade": 3,
     "status": "正常",
-    "cookies": "Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765732505; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765732505; HMACCOUNT=DE6D003AF9B63365; passport_csrf_token=de236bfbc51ce52de8472171d66772ca; passport_csrf_token_default=de236bfbc51ce52de8472171d66772ca; passport_auth_status=70bc012b983a9064e4f3a7898d87d418%2C; passport_auth_status_ss=70bc012b983a9064e4f3a7898d87d418%2C; sid_guard=f03bb733e87eb014d815aac8732c84d4%7C1765732521%7C5184001%7CThu%2C+12-Feb-2026+17%3A15%3A22+GMT; uid_tt=3b4dd2933a699b3939231275070108e8; uid_tt_ss=3b4dd2933a699b3939231275070108e8; sid_tt=f03bb733e87eb014d815aac8732c84d4; sessionid=f03bb733e87eb014d815aac8732c84d4; sessionid_ss=f03bb733e87eb014d815aac8732c84d4; session_tlb_tag=sttt%7C18%7C8Du3M-h-sBTYFarIcyyE1P_________h9fgcfwyOU2RYurCPtFX5aWd0yn0fUYG_J7HNfCPo_Ag%3D; session_tlb_tag_bk=sttt%7C18%7C8Du3M-h-sBTYFarIcyyE1P_________h9fgcfwyOU2RYurCPtFX5aWd0yn0fUYG_J7HNfCPo_Ag%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDBhMDk5ZjVlNGFlZDBlZmJmOTYzYWIwY2MwN2NmM2QzMDMyYzdhNTgKFwiKuIDf2s3zAxCp4fvJBhimDDgBQOsHGgJscSIgZjAzYmI3MzNlODdlYjAxNGQ4MTVhYWM4NzMyYzg0ZDQ; ssid_ucp_v1=1.0.0-KDBhMDk5ZjVlNGFlZDBlZmJmOTYzYWIwY2MwN2NmM2QzMDMyYzdhNTgKFwiKuIDf2s3zAxCp4fvJBhimDDgBQOsHGgJscSIgZjAzYmI3MzNlODdlYjAxNGQ4MTVhYWM4NzMyYzg0ZDQ; star_sessionid=f03bb733e87eb014d815aac8732c84d4; possess_scene_star_id=1814327936588138",
-    "collectedCount": 24,
-    "lastCollectDate": "2025-12-16"
-  },
-  {
-    "remark": "科龙-2025",
-    "nickName": "科龙-2025",
-    "grade": 1,
-    "status": "失效",
-    "cookies": "acsessionid=91e32a9c17b94bee84fdcf924440c78c; csrf_session_id=3d25c428963cbea494b982fc02ea5129; star_sessionid=7455180e605e7497b2a208ce56802489; possess_scene_star_id=1819217473362395; tt_webid=7584018685615998510",
-    "collectedCount": 0,
-    "lastCollectDate": "2025-12-16"
-  },
-  {
-    "remark": "雅诗兰黛-2024",
-    "nickName": "雅诗兰黛-2024",
-    "grade": 5,
-    "status": "失效",
-    "cookies": "acsessionid=91e32a9c17b94bee84fdcf924440c78c; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7584018685615998510; star_sessionid=24aeb01e8cf318e745320f3eed2b79e0; possess_scene_star_id=1792194138399753",
-    "collectedCount": 0,
-    "lastCollectDate": "2025-12-16"
-  },
-  {
-    "remark": "天猫-2024",
-    "nickName": "天猫-2024",
-    "grade": 1,
-    "status": "失效",
-    "cookies": "acsessionid=91e32a9c17b94bee84fdcf924440c78c; csrf_session_id=3d25c428963cbea494b982fc02ea5129; tt_webid=7584018685615998510; star_sessionid=6e3f210d38db3f0d84e344d42e18ccb0; possess_scene_star_id=1795935637556233",
-    "collectedCount": 0,
-    "lastCollectDate": "2025-12-16"
+    "cookies": "Hm_lvt_5d77c979053345c4bd8db63329f818ec=1765993243; Hm_lpvt_5d77c979053345c4bd8db63329f818ec=1765993243; HMACCOUNT=41FA3B052D222505; passport_csrf_token=c35e7596a6dc2c4baf5b28ae993749c0; passport_csrf_token_default=c35e7596a6dc2c4baf5b28ae993749c0; passport_auth_status=782af6084964419fd4965e917c1b8b30%2C; passport_auth_status_ss=782af6084964419fd4965e917c1b8b30%2C; sid_guard=abe72788310b8fa9e8ce769c5dc39b2e%7C1765993268%7C5184001%7CSun%2C+15-Feb-2026+17%3A41%3A09+GMT; uid_tt=59777f0ba7ddbeb2d266b4768467fc87; uid_tt_ss=59777f0ba7ddbeb2d266b4768467fc87; sid_tt=abe72788310b8fa9e8ce769c5dc39b2e; sessionid=abe72788310b8fa9e8ce769c5dc39b2e; sessionid_ss=abe72788310b8fa9e8ce769c5dc39b2e; session_tlb_tag=sttt%7C5%7Cq-cniDELj6noznacXcObLv_________duEzzOYNIP3fRRtpzWI8Kf_tPigbKCFFnAsi2OHiokkM%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KDNkM2FjZDA3ZDZiN2VmZTc2NzFiNDZiZDcyZWNlN2E5YmRlY2IwMGQKFwiKuIDf2s3zAxC01ovKBhimDDgBQOsHGgJscSIgYWJlNzI3ODgzMTBiOGZhOWU4Y2U3NjljNWRjMzliMmU; ssid_ucp_v1=1.0.0-KDNkM2FjZDA3ZDZiN2VmZTc2NzFiNDZiZDcyZWNlN2E5YmRlY2IwMGQKFwiKuIDf2s3zAxC01ovKBhimDDgBQOsHGgJscSIgYWJlNzI3ODgzMTBiOGZhOWU4Y2U3NjljNWRjMzliMmU; star_sessionid=abe72788310b8fa9e8ce769c5dc39b2e; possess_scene_star_id=1814327936588138",
+    "collectedCount": 6,
+    "lastCollectDate": "2025-12-17"
   }
 ]

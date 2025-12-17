@@ -81,6 +81,49 @@ function sleep(ms) {
 }
 
 /**
+ * 格式化分布数据：将 key:value 格式转换为百分比字符串
+ * 支持三种输入：数量(count)、比例(0-1)、百分比(0-100)
+ */
+function formatDistributionData(items, options = {}) {
+    const {
+        decimals = 1,
+        keyMap = null,
+        join = '、'
+    } = options;
+
+    if (!Array.isArray(items) || items.length === 0) return '';
+
+    const parsed = items.map(item => {
+        const rawKey = String(item.distribution_key || item.key || '').trim();
+        const rawValue = item.distribution_value !== undefined ? item.distribution_value : (item.value !== undefined ? item.value : 0);
+        const value = Number(rawValue);
+        const key = keyMap && keyMap[rawKey] ? keyMap[rawKey] : rawKey;
+        return { key, value: Number.isFinite(value) ? value : 0 };
+    });
+
+    const values = parsed.map(p => p.value);
+    const sum = values.reduce((a, b) => a + b, 0);
+    if (sum <= 0) return parsed.map(p => `${p.key}:${p.value}`).join(join);
+
+    // 判断是比例(0-1)、百分比(0-100)还是数量
+    let mode = 'count';
+    if (sum <= 1.0000001 && values.every(v => v >= 0 && v <= 1.0000001)) {
+        mode = 'ratio';
+    } else if (sum <= 100.0000001 && values.every(v => v >= 0 && v <= 100.0000001)) {
+        mode = 'percent';
+    }
+
+    return parsed.map(p => {
+        const pct = mode === 'ratio'
+            ? p.value * 100
+            : mode === 'percent'
+                ? p.value
+                : (p.value / sum) * 100;
+        return `${p.key}${pct.toFixed(decimals)}%`;
+    }).join(join);
+}
+
+/**
  * 通用重试包装器
  * @param {Function} apiCall - 要执行的API调用函数
  * @param {string} apiName - API名称（用于日志）
@@ -1092,8 +1135,22 @@ async function getAudienceProfile(authorId, cookies) {
                 for (const dist of distributions) {
                     const typeDisplay = dist.type_display || '';
                     const list = dist.distribution_list || [];
-                    const distStr = list.map(item => `${item.distribution_key}:${item.distribution_value}`).join('、');
-                    data[`用户画像-${typeDisplay}`] = distStr;
+                    
+                    // 性别分布需要特殊处理：female/male -> 女性/男性，且保留2位小数
+                    if (typeDisplay === '性别分布') {
+                        const genderKeyMap = { female: '女性', male: '男性' };
+                        const distStr = formatDistributionData(list, {
+                            decimals: 2,
+                            keyMap: genderKeyMap
+                        });
+                        data[`用户画像-${typeDisplay}`] = distStr;
+                    } else {
+                        // 其他分布：年龄、地域、兴趣、设备等，保留1位小数
+                        const distStr = formatDistributionData(list, {
+                            decimals: 1
+                        });
+                        data[`用户画像-${typeDisplay}`] = distStr;
+                    }
                 }
                 
                 return { success: true, data };
