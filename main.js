@@ -633,19 +633,59 @@ ipcMain.handle('resolve-douyin-short-link', wrapAuth(async (event, shortUrl) => 
         try {
             console.log('[LinkConvert][Main] resolve-douyin-short-link start:', shortUrl);
             const { session } = require('electron');
-            const partition = `resolve-link-${Date.now()}`;
+            const partition = `resolve-link-${Date.now()}-${Math.random().toString(36).slice(2)}`;
             const resolveSession = session.fromPartition(partition, { cache: false });
             
             let foundUserUrl = null;
+            let resolved = false; // 防止重复resolve
+            let finishLoadTimer = null; // 记录did-finish-load的定时器
+            
+            // 完成处理的统一函数
+            const finishResolve = (success, result) => {
+                if (resolved) return;
+                resolved = true;
+                clearTimeout(timeout);
+                if (finishLoadTimer) clearTimeout(finishLoadTimer);
+                if (!hiddenWindow.isDestroyed()) {
+                    hiddenWindow.close();
+                }
+                if (success) {
+                    console.log('[LinkConvert][Main] resolve success:', { shortUrl, userUrl: result });
+                    resolve({ success: true, userUrl: result });
+                } else {
+                    console.log('[LinkConvert][Main] resolve failed:', { shortUrl, message: result });
+                    resolve({ success: false, message: result });
+                }
+            };
+            
+            // 尝试从URL中提取用户ID
+            const tryExtractUserUrl = (url) => {
+                if (!url || foundUserUrl) return false;
+                
+                // 方式1: 从 www.douyin.com/user/ 提取
+                const userMatch = url.match(/https:\/\/www\.douyin\.com\/user\/([A-Za-z0-9_-]+)/);
+                if (userMatch) {
+                    foundUserUrl = `https://www.douyin.com/user/${userMatch[1]}`;
+                    console.log('[LinkConvert][Main] captured douyin user url:', foundUserUrl);
+                    return true;
+                }
+                
+                // 方式2: 兜底 - 从 www.iesdouyin.com/share/user/ 提取 sec_uid
+                const iesMatch = url.match(/https:\/\/www\.iesdouyin\.com\/share\/user\/([A-Za-z0-9_-]+)/);
+                if (iesMatch) {
+                    foundUserUrl = `https://www.douyin.com/user/${iesMatch[1]}`;
+                    console.log('[LinkConvert][Main] captured from iesdouyin:', foundUserUrl);
+                    return true;
+                }
+                
+                return false;
+            };
             
             // 监听所有请求，查找抖音主页URL
             resolveSession.webRequest.onBeforeRequest({ urls: ['*://*/*'] }, (details, callback) => {
-                const url = details.url;
-                // 匹配抖音主页URL格式
-                const userMatch = url.match(/https:\/\/www\.douyin\.com\/user\/([A-Za-z0-9_-]+)/);
-                if (userMatch && !foundUserUrl) {
-                    foundUserUrl = `https://www.douyin.com/user/${userMatch[1]}`;
-                    console.log('[LinkConvert][Main] captured douyin user url:', foundUserUrl);
+                if (tryExtractUserUrl(details.url) && !resolved) {
+                    // 捕获到URL后立即完成，不等待页面加载
+                    setTimeout(() => finishResolve(true, foundUserUrl), 100);
                 }
                 callback({});
             });
@@ -677,12 +717,30 @@ ipcMain.handle('resolve-douyin-short-link', wrapAuth(async (event, shortUrl) => 
                         console.log('[ProtocolBlock] blocked hidden will-navigate:', url);
                         e.preventDefault();
                     }
+                    // 兜底：尝试从导航URL中提取
+                    if (tryExtractUserUrl(url) && !resolved) {
+                        setTimeout(() => finishResolve(true, foundUserUrl), 100);
+                    }
                 });
 
                 hiddenWindow.webContents.on('will-redirect', (e, url) => {
                     if (url && !/^https?:\/\//i.test(url)) {
                         console.log('[ProtocolBlock] blocked hidden will-redirect:', url);
                         e.preventDefault();
+                        return;
+                    }
+                    // 增强兜底：从重定向URL中提取
+                    console.log('[LinkConvert][Main] will-redirect:', url);
+                    if (tryExtractUserUrl(url) && !resolved) {
+                        setTimeout(() => finishResolve(true, foundUserUrl), 100);
+                    }
+                });
+
+                // 增强兜底：监听did-redirect-navigation事件
+                hiddenWindow.webContents.on('did-redirect-navigation', (e, url) => {
+                    console.log('[LinkConvert][Main] did-redirect-navigation:', url);
+                    if (tryExtractUserUrl(url) && !resolved) {
+                        setTimeout(() => finishResolve(true, foundUserUrl), 100);
                     }
                 });
             } catch (e) {
@@ -691,43 +749,37 @@ ipcMain.handle('resolve-douyin-short-link', wrapAuth(async (event, shortUrl) => 
             
             // 设置超时
             const timeout = setTimeout(() => {
-                if (!hiddenWindow.isDestroyed()) {
-                    hiddenWindow.close();
+                if (foundUserUrl) {
+                    finishResolve(true, foundUserUrl);
+                } else {
+                    finishResolve(false, '请求超时');
                 }
-                console.log('[LinkConvert][Main] resolve timeout:', shortUrl);
-                resolve({ success: false, message: '请求超时' });
             }, 15000);
             
             // 页面加载完成后等待一下再检查结果
             hiddenWindow.webContents.on('did-finish-load', () => {
+                if (resolved) return; // 已经处理过，跳过
                 console.log('[LinkConvert][Main] did-finish-load:', shortUrl);
-                setTimeout(() => {
-                    clearTimeout(timeout);
-                    if (!hiddenWindow.isDestroyed()) {
-                        hiddenWindow.close();
-                    }
+                // 清除之前的定时器（防止多次did-finish-load导致多个定时器）
+                if (finishLoadTimer) clearTimeout(finishLoadTimer);
+                finishLoadTimer = setTimeout(() => {
                     if (foundUserUrl) {
-                        console.log('[LinkConvert][Main] resolve success:', { shortUrl, userUrl: foundUserUrl });
-                        resolve({ success: true, userUrl: foundUserUrl });
+                        finishResolve(true, foundUserUrl);
                     } else {
-                        console.log('[LinkConvert][Main] resolve failed (no user url):', shortUrl);
-                        resolve({ success: false, message: '未找到抖音主页' });
+                        finishResolve(false, '未找到抖音主页');
                     }
                 }, 2000);
             });
             
-            hiddenWindow.webContents.on('did-fail-load', () => {
-                clearTimeout(timeout);
-                if (!hiddenWindow.isDestroyed()) {
-                    hiddenWindow.close();
-                }
-                console.log('[LinkConvert][Main] did-fail-load:', shortUrl);
+            hiddenWindow.webContents.on('did-fail-load', (e, errorCode, errorDescription, validatedURL, isMainFrame) => {
+                if (resolved) return;
+                // 只处理主框架的加载失败
+                if (!isMainFrame) return;
+                console.log('[LinkConvert][Main] did-fail-load:', shortUrl, errorCode, errorDescription);
                 if (foundUserUrl) {
-                    console.log('[LinkConvert][Main] resolve success after fail-load:', { shortUrl, userUrl: foundUserUrl });
-                    resolve({ success: true, userUrl: foundUserUrl });
+                    finishResolve(true, foundUserUrl);
                 } else {
-                    console.log('[LinkConvert][Main] resolve failed after fail-load:', shortUrl);
-                    resolve({ success: false, message: '页面加载失败' });
+                    finishResolve(false, '页面加载失败');
                 }
             });
             

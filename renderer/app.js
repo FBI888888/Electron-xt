@@ -2007,6 +2007,13 @@ async function convertSingleItem(item, index, cookies, maxRetries = 3) {
                     item.status = 'success';
                     logLinkConvert(`[${index}] 转换成功`, { douyinUrl: item.douyinUrl, xingtuUrl: item.xingtuUrl, xingtuNickName: item.xingtuNickName });
                     return true;
+                } else if (searchResult.notRegistered) {
+                    // 达人未入驻星图，标记为"无星图"，不重试
+                    item.status = 'no_xingtu';
+                    item.xingtuUrl = '';
+                    item.xingtuNickName = '无星图';
+                    logLinkConvert(`[${index}] 达人未入驻星图`, { douyinUrl: item.douyinUrl });
+                    return true; // 返回true表示处理完成，不触发重试
                 } else {
                     throw new Error(searchResult.message || '未找到星图达人');
                 }
@@ -2091,7 +2098,7 @@ async function startConvert() {
             const success = await convertSingleItem(item, itemIndex + 1, cookies, 3);
             
             processedCount++;
-            if (success && item.status === 'success') {
+            if (success && (item.status === 'success' || item.status === 'no_xingtu')) {
                 successCount++;
             } else if (item.status === 'failed') {
                 failCount++;
@@ -2164,7 +2171,7 @@ async function manualConvertLink(index) {
     renderLinkConvertList();
 
     const ok = await convertSingleItem(item, index + 1, cookies, 3);
-    if (ok && item.status === 'success') {
+    if (ok && (item.status === 'success' || item.status === 'no_xingtu')) {
         showToast('success', '转换成功', `第 ${index + 1} 条转换成功`);
     } else {
         showToast('error', '转换失败', `第 ${index + 1} 条转换失败：${item.error || '未知错误'}`);
@@ -2235,6 +2242,10 @@ function renderLinkConvertList() {
                 statusClass = 'status-tag normal';
                 break;
             case 'success':
+                statusText = '成功';
+                statusClass = 'status-tag normal';
+                break;
+            case 'no_xingtu':
                 statusText = '成功';
                 statusClass = 'status-tag normal';
                 break;

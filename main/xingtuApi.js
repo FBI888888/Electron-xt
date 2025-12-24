@@ -245,7 +245,8 @@ async function searchAuthorByDouyinUrl(douyinUrl, cookies) {
                     nickName: nickName
                 };
             }
-            return { success: false, message: '未找到对应的达人' };
+            // 达人未入驻星图，返回特殊状态，不触发重试
+            return { success: true, notRegistered: true, message: '无星图' };
         }
         
         return { success: false, message: result.base_resp?.status_message || '搜索失败' };
