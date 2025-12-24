@@ -428,7 +428,7 @@ router.delete('/licenses/:id', verifyAdminToken, async (req, res) => {
 
 /**
  * POST /api/admin/licenses/:id/reset
- * 重置激活次数 (清除激活日志)
+ * 重置激活次数 (清除激活日志，但保留过期时间)
  */
 router.post('/licenses/:id/reset', verifyAdminToken, async (req, res) => {
     try {
@@ -448,6 +448,61 @@ router.post('/licenses/:id/reset', verifyAdminToken, async (req, res) => {
         });
     } catch (error) {
         console.error('重置激活次数错误:', error);
+        return res.status(500).json({
+            success: false,
+            message: '服务器错误'
+        });
+    }
+});
+
+/**
+ * PUT /api/admin/licenses/:id
+ * 修改激活码的等级和过期时间
+ */
+router.put('/licenses/:id', verifyAdminToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { member_level, expire_at } = req.body;
+
+        if (!member_level && expire_at === undefined) {
+            return res.status(400).json({
+                success: false,
+                message: '请提供要修改的字段'
+            });
+        }
+
+        if (member_level && !Object.values(MemberLevel).includes(member_level)) {
+            return res.status(400).json({
+                success: false,
+                message: '无效的会员等级'
+            });
+        }
+
+        if (expire_at !== null && expire_at !== undefined) {
+            const expireDate = new Date(expire_at);
+            if (isNaN(expireDate.getTime())) {
+                return res.status(400).json({
+                    success: false,
+                    message: '无效的过期时间格式'
+                });
+            }
+        }
+
+        const success = await License.updateLicense(id, { member_level, expire_at });
+
+        if (success) {
+            return res.json({
+                success: true,
+                message: '修改成功'
+            });
+        }
+
+        return res.status(404).json({
+            success: false,
+            message: '激活码不存在或无修改内容'
+        });
+    } catch (error) {
+        console.error('修改激活码错误:', error);
         return res.status(500).json({
             success: false,
             message: '服务器错误'

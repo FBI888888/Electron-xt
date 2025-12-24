@@ -464,7 +464,7 @@ class License {
     }
 
     /**
-     * 重置激活次数 (清除激活日志，解绑设备，恢复未使用状态)
+     * 重置激活次数 (清除激活日志，解绑设备，恢复未使用状态，但保留过期时间)
      */
     static async resetActivationHistory(licenseId) {
         const [rows] = await pool.execute('SELECT * FROM licenses WHERE id = ?', [licenseId]);
@@ -476,19 +476,52 @@ class License {
             [licenseId]
         );
 
-        // 重置激活码状态
+        // 重置激活码状态，但保留 expire_at
         await pool.execute(
             `UPDATE licenses SET 
                 machine_hash = NULL, 
                 status = 'unused', 
                 activated_at = NULL, 
-                expire_at = NULL,
                 last_check_at = NULL
              WHERE id = ?`,
             [licenseId]
         );
 
         return true;
+    }
+
+    /**
+     * 修改激活码等级和过期时间
+     */
+    static async updateLicense(licenseId, updates) {
+        const [rows] = await pool.execute('SELECT * FROM licenses WHERE id = ?', [licenseId]);
+        if (!rows[0]) return false;
+
+        const { member_level, expire_at } = updates;
+        const updateFields = [];
+        const updateValues = [];
+
+        if (member_level && Object.values(MemberLevel).includes(member_level)) {
+            updateFields.push('member_level = ?');
+            updateValues.push(member_level);
+        }
+
+        if (expire_at !== undefined) {
+            updateFields.push('expire_at = ?');
+            updateValues.push(expire_at);
+        }
+
+        if (updateFields.length === 0) {
+            return false;
+        }
+
+        updateValues.push(licenseId);
+        const [result] = await pool.execute(
+            `UPDATE licenses SET ${updateFields.join(', ')} WHERE id = ?`,
+            updateValues
+        );
+
+        return result.affectedRows > 0;
     }
 
     /**

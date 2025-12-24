@@ -554,6 +554,30 @@
         </div>
     </div>
 
+    <!-- 修改激活码弹窗 -->
+    <div class="modal" id="updateModal">
+        <div class="modal-content">
+            <h2>修改激活码</h2>
+            <input type="hidden" id="updateId">
+            <div class="form-group">
+                <label>会员等级</label>
+                <select id="updateLevel" required>
+                    <option value="VIP">VIP (会员)</option>
+                    <option value="VVIP">VVIP (高级会员)</option>
+                    <option value="SVIP">SVIP (超级会员)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>过期时间</label>
+                <input type="datetime-local" id="updateExpireAt" required>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('updateModal')">取消</button>
+                <button class="btn btn-success" onclick="doUpdate()">确认修改</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
@@ -708,6 +732,7 @@
                         ${item.machine_hash ? `<button class="btn btn-warning btn-sm" onclick="unbind(${item.id})">解绑</button>` : ''}
                         ${item.status !== 'banned' ? `<button class="btn btn-danger btn-sm" onclick="ban(${item.id})">禁用</button>` : `<button class="btn btn-success btn-sm" onclick="unban(${item.id})">启用</button>`}
                         <button class="btn btn-primary btn-sm" onclick="openExtendModal(${item.id})">延期</button>
+                        <button class="btn btn-sm" style="background:#06b6d4;color:#fff;" onclick="openUpdateModal(${item.id}, '${item.member_level}', '${item.expire_at}')" title="修改等级和过期时间">修改</button>
                         <button class="btn btn-sm" style="background:#8b5cf6;color:#fff;" onclick="resetLicense(${item.id})" title="重置激活次数">重置</button>
                         <button class="btn btn-sm" style="background:#ef4444;color:#fff;" onclick="deleteLicense(${item.id}, '${item.license_key}')" title="删除激活码">删除</button>
                     </td>
@@ -1019,6 +1044,71 @@
                 const data = await res.json();
                 showToast(data.message, data.success ? 'success' : 'error');
                 if (data.success) { loadStats(); loadLicenses(currentPage); }
+            } catch (e) {
+                showToast('操作失败', 'error');
+            }
+        }
+
+        // 修改激活码
+        function openUpdateModal(id, memberLevel, expireAt) {
+            document.getElementById('updateId').value = id;
+            document.getElementById('updateLevel').value = memberLevel;
+            
+            // 转换过期时间格式为 datetime-local 格式
+            if (expireAt && expireAt !== 'null') {
+                const date = new Date(expireAt);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                document.getElementById('updateExpireAt').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+            } else {
+                // 如果没有过期时间，设置为30天后
+                const date = new Date();
+                date.setDate(date.getDate() + 30);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                document.getElementById('updateExpireAt').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+            
+            document.getElementById('updateModal').classList.add('active');
+        }
+
+        async function doUpdate() {
+            const id = document.getElementById('updateId').value;
+            const memberLevel = document.getElementById('updateLevel').value;
+            const expireAt = document.getElementById('updateExpireAt').value;
+            
+            if (!expireAt) {
+                showToast('请选择过期时间', 'error');
+                return;
+            }
+            
+            // 转换为ISO格式
+            const expireDate = new Date(expireAt).toISOString();
+            
+            try {
+                const res = await fetch(`${API_BASE}/admin/licenses/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        member_level: memberLevel, 
+                        expire_at: expireDate 
+                    })
+                });
+                const data = await res.json();
+                showToast(data.message, data.success ? 'success' : 'error');
+                if (data.success) {
+                    closeModal('updateModal');
+                    loadLicenses(currentPage);
+                }
             } catch (e) {
                 showToast('操作失败', 'error');
             }
