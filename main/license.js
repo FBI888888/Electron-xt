@@ -15,7 +15,7 @@ const path = require('path');
 
 // 鉴权服务器地址 (部署后需修改为你的服务器IP)
 const AUTH_SERVER = {
-    host: '150.158.36.100/',      // 修改为你的服务器IP
+    host: '150.158.36.100',      // 修改为你的服务器IP
     port: 3000,              // 服务端口
     protocol: 'http'         // 使用 http (无需 https)
 };
