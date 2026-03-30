@@ -91,21 +91,6 @@ function getDiskSerial() {
 }
 
 /**
- * 获取MAC地址 (获取第一个非内部网卡)
- */
-function getMacAddress() {
-    const interfaces = os.networkInterfaces();
-    for (const name of Object.keys(interfaces)) {
-        for (const iface of interfaces[name]) {
-            if (!iface.internal && iface.mac && iface.mac !== '00:00:00:00:00:00') {
-                return iface.mac;
-            }
-        }
-    }
-    return '';
-}
-
-/**
  * 生成唯一机器码
  * 结合多种硬件信息生成，防止单一硬件更换导致机器码变化
  */
@@ -113,16 +98,14 @@ function generateMachineCode() {
     const cpuId = getCpuId();
     const motherboard = getMotherboardSerial();
     const disk = getDiskSerial();
-    const mac = getMacAddress();
     const hostname = os.hostname();
     const platform = os.platform();
-    
+
     // 组合多种硬件信息
     const rawData = [
         cpuId,
         motherboard,
         disk,
-        mac,
         hostname,
         platform
     ].filter(Boolean).join('|');
