@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Folder, LockKeyhole, Save } from 'lucide-react';
+import { Folder, FolderOpen, LockKeyhole, Save } from 'lucide-react';
 import type { CollectField, CollectionSettings } from '../../../../shared/domain';
 import { Button, PageHeader, SuccessMark } from '../../components/ui';
 import { useAppStore } from '../../store/appStore';
@@ -26,13 +26,55 @@ export const SettingsPage = () => {
     if (!result.ok) { setError(result.error.message); return; }
     setSettings(result.value); setSaved(true); setTimeout(() => setSaved(false), 2200);
   };
+  const chooseDirectory = async () => {
+    const result = await window.api.settings.chooseDirectory();
+    if (!result.ok) { setError(result.error.message); return; }
+    if (result.value) setDraft((current) => current ? { ...current, directory: result.value as string } : current);
+  };
 
-  return <>
-    <PageHeader title="采集设置" description="控制快照字段、账号调度和任务并发。设置保存在当前用户目录。" actions={<Button variant="primary" onClick={save}><Save size={16} />保存设置</Button>} />
-    {saved ? <div className="inline-notice"><SuccessMark>设置已保存，将在下一次任务启动时生效</SuccessMark></div> : null}
-    <div className="settings-layout">
-      <section className="settings-card"><div className="settings-card__header"><div><h2>基础配置</h2><p>导出文件名、账号选择和并发数</p></div></div><div className="settings-card__body form-grid"><label className="field"><span>默认文件名</span><input value={draft.filename} onChange={(event) => setDraft({ ...draft, filename: event.target.value })} /></label><label className="field"><span>默认保存目录</span><div className="input-with-icon"><Folder size={16} /><input value={draft.directory} onChange={(event) => setDraft({ ...draft, directory: event.target.value })} placeholder="留空时导出时选择" /></div></label><label className="field"><span>账号调度</span><select value={draft.accountMode} onChange={(event) => setDraft({ ...draft, accountMode: event.target.value as CollectionSettings['accountMode'] })}><option value="round-robin">多账号轮询</option><option value="single">固定单账号</option></select></label><label className="field"><span>固定账号</span><select disabled={draft.accountMode !== 'single'} value={draft.singleAccountId ?? ''} onChange={(event) => setDraft({ ...draft, singleAccountId: event.target.value || null })}><option value="">请选择账号</option>{accounts.filter((account) => account.status === 'healthy').map((account) => <option value={account.id} key={account.id}>{account.remark} · {account.nickname}</option>)}</select></label><label className="field"><span>任务并发数</span><input type="number" min={1} max={6} value={draft.concurrency} onChange={(event) => setDraft({ ...draft, concurrency: Math.min(6, Math.max(1, Number(event.target.value))) })} /><small>建议保持 2；过高并发可能触发平台限制。</small></label></div></section>
-      <section className="settings-card settings-card--wide"><div className="settings-card__header"><div><h2>采集字段</h2><p>基础信息、商业卡片、月连接用户、月涨粉率和报价始终采集</p></div><span className="locked-label"><LockKeyhole size={14} />5 项必采</span></div><div className="settings-card__body field-groups">{fieldGroups.map((group) => <div className="field-group" key={group.title}><div><h3>{group.title}</h3><p>{group.description}</p></div><div className="field-options">{group.fields.map(([value, label]) => <label className={`field-option ${draft.fields.includes(value) ? 'field-option--selected' : ''}`} key={value}><input type="checkbox" checked={draft.fields.includes(value)} onChange={() => toggleField(value)} /><span>{label}</span></label>)}</div></div>)}</div></section>
+  return (
+    <div className="page">
+      <PageHeader title="采集设置" description="控制快照字段、账号调度和任务并发。设置保存在当前用户目录。" actions={<Button variant="primary" onClick={save}><Save size={16} />保存设置</Button>} />
+      <div className="page-content page-content--scroll settings-layout">
+        {saved ? <div className="inline-notice"><SuccessMark>设置已保存，将在下一次任务启动时生效</SuccessMark></div> : null}
+        <section className="settings-section">
+          <div className="settings-section__heading">
+            <span className="eyebrow">输出</span>
+            <h2>基础配置</h2>
+            <p>导出文件名、账号选择和并发数</p>
+          </div>
+          <div className="form-grid settings-section__body">
+            <label className="field"><span>默认文件名</span><input value={draft.filename} onChange={(event) => setDraft({ ...draft, filename: event.target.value })} /></label>
+            <label className="field field--full"><span>默认保存目录</span><div className="inline-field"><div className="input-with-icon"><Folder size={16} /><input value={draft.directory} onChange={(event) => setDraft({ ...draft, directory: event.target.value })} placeholder="留空时导出时选择" /></div><Button onClick={() => void chooseDirectory()}><FolderOpen size={15} />选择目录</Button></div></label>
+            <label className="field"><span>账号调度</span><select value={draft.accountMode} onChange={(event) => setDraft({ ...draft, accountMode: event.target.value as CollectionSettings['accountMode'] })}><option value="round-robin">多账号轮询</option><option value="single">固定单账号</option></select></label>
+            <label className="field"><span>固定账号</span><select disabled={draft.accountMode !== 'single'} value={draft.singleAccountId ?? ''} onChange={(event) => setDraft({ ...draft, singleAccountId: event.target.value || null })}><option value="">请选择账号</option>{accounts.filter((account) => account.status === 'healthy').map((account) => <option value={account.id} key={account.id}>{account.remark} · {account.nickname}</option>)}</select></label>
+            <label className="field"><span>任务并发数</span><input type="number" min={1} max={6} value={draft.concurrency} onChange={(event) => setDraft({ ...draft, concurrency: Math.min(6, Math.max(1, Number(event.target.value))) })} /><small>建议保持 2；过高并发可能触发平台限制。</small></label>
+          </div>
+        </section>
+        <section className="settings-section settings-section--vertical">
+          <div className="settings-section__heading">
+            <span className="eyebrow">字段范围</span>
+            <h2>采集字段</h2>
+            <p>基础信息、商业卡片、月连接用户、月涨粉率和报价始终采集</p>
+            <span className="locked-label"><LockKeyhole size={14} />5 项必采</span>
+          </div>
+          <div className="field-matrix">
+            {fieldGroups.map((group) => (
+              <div className="field-matrix__group" key={group.title}>
+                <h3>{group.title}</h3>
+                <div>
+                  {group.fields.map(([value, label]) => (
+                    <label className={`choice-card ${draft.fields.includes(value) ? 'field-option--selected' : ''}`} key={value}>
+                      <input type="checkbox" checked={draft.fields.includes(value)} onChange={() => toggleField(value)} />
+                      <span>{label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
     </div>
-  </>;
+  );
 };

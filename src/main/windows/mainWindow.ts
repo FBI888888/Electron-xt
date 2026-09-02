@@ -32,7 +32,7 @@ export const createMainWindow = (): BrowserWindow => {
     minHeight: 680,
     show: false,
     autoHideMenuBar: true,
-    backgroundColor: '#f4f6f8',
+    backgroundColor: '#f4f2ef',
     icon: join(__dirname, '../../logo.ico'),
     title: '星图数据快照',
     webPreferences: {

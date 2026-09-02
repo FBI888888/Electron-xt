@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { app, dialog, ipcMain } from 'electron';
 import { z } from 'zod';
 import type { AppEvent, BootstrapData, CollectionSettings } from '../../shared/domain';
 import { IPC } from '../../shared/ipc';
@@ -82,6 +82,10 @@ export const registerIpcHandlers = (services: IpcServices): void => {
   const ensurePremium = async (): Promise<void> => services.license.authorize(['VVIP', 'SVIP']);
   const emitAccounts = (): void => services.emit({ type: 'accounts.changed', accounts: services.repository.listAccounts() });
 
+  handle(IPC.appQuit, () => {
+    app.quit();
+  });
+
   handle(IPC.bootstrap, async (): Promise<BootstrapData> => ({
     accounts: services.repository.listAccounts(),
     settings: services.repository.getSettings(),
@@ -108,9 +112,14 @@ export const registerIpcHandlers = (services: IpcServices): void => {
   handle(IPC.accountsUpdate, async (rawId, input) => {
     await ensureAuthorized();
     const id = entityIdSchema.parse(rawId);
-    const draft = accountDraftSchema.parse(input);
-    const details = await services.xingtu.checkAccount(draft.cookies);
-    services.repository.updateAccount(id, draft);
+    const patch = z.object({
+      remark: z.string().trim().min(1, '请输入账号备注').max(100, '账号备注过长'),
+      cookies: z.string().max(100_000, 'Cookie 内容过长').optional(),
+    }).parse(input);
+    const cookies = patch.cookies?.trim() || services.repository.getAccountCookies(id);
+    if (cookies.length < 10) throw new Error('Cookie 内容无效');
+    const details = await services.xingtu.checkAccount(cookies);
+    services.repository.updateAccount(id, { remark: patch.remark, cookies });
     const account = services.repository.updateAccountHealth(id, {
       nickname: details.nickname,
       grade: details.grade,
@@ -155,15 +164,26 @@ export const registerIpcHandlers = (services: IpcServices): void => {
     emitAccounts();
     return services.repository.listAccounts();
   });
-  handle(IPC.accountsOpenLogin, async (rawProvider) => {
+  handle(IPC.accountsOpenLogin, async (rawProvider, rawRemark) => {
     await ensureAuthorized();
-    await services.login.open(z.enum(['xingtu', 'fangzhou']).parse(rawProvider));
+    await services.login.open(
+      z.enum(['xingtu', 'fangzhou']).parse(rawProvider),
+      z.string().trim().min(1, '请输入账号备注').max(80, '账号备注过长').parse(rawRemark),
+    );
   });
 
   handle(IPC.settingsGet, () => services.repository.getSettings());
   handle(IPC.settingsUpdate, async (input) => {
     await ensureAuthorized();
     return services.repository.saveSettings(settingsSchema.parse(input) as CollectionSettings);
+  });
+  handle(IPC.settingsChooseDirectory, async () => {
+    const selection = await dialog.showOpenDialog({
+      title: '选择默认保存目录',
+      properties: ['openDirectory', 'createDirectory'],
+    });
+    if (selection.canceled || !selection.filePaths[0]) return null;
+    return selection.filePaths[0];
   });
 
   handle(IPC.collectionGet, () => ({
@@ -235,6 +255,8 @@ export const registerIpcHandlers = (services: IpcServices): void => {
     await ensurePremium();
     return services.bloggers.fetch(z.number().int().min(1).max(500).parse(rawPages));
   });
+  handle(IPC.bloggersPause, () => services.bloggers.pause());
+  handle(IPC.bloggersResume, () => services.bloggers.resume());
   handle(IPC.bloggersStop, () => services.bloggers.stop());
   handle(IPC.bloggersClear, async () => {
     await ensurePremium();

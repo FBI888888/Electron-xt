@@ -18,7 +18,7 @@
     "build:win": "npm run build:app && electron-builder --win",
     "build:mac": "npm run build:app && electron-builder --mac",
     "build:dir": "npm run build:app && electron-builder --dir",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "node scripts/ensure-electron.cjs && electron-builder install-app-deps"
   },
   "engines": {
     "node": ">=20"
@@ -93,6 +93,7 @@
       "icon": "logo.ico"
     },
     "mac": {
+      "icon": "build/icon.icns",
       "target": [
         {
           "target": "dmg",

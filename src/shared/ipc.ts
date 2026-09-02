@@ -17,6 +17,7 @@ import type {
 
 export const IPC = {
   bootstrap: 'app:bootstrap',
+  appQuit: 'app:quit',
   accountsList: 'accounts:list',
   accountsAdd: 'accounts:add',
   accountsUpdate: 'accounts:update',
@@ -26,6 +27,7 @@ export const IPC = {
   accountsOpenLogin: 'accounts:open-login',
   settingsGet: 'settings:get',
   settingsUpdate: 'settings:update',
+  settingsChooseDirectory: 'settings:choose-directory',
   collectionGet: 'collection:get',
   collectionImportText: 'collection:import-text',
   collectionImportFile: 'collection:import-file',
@@ -39,6 +41,8 @@ export const IPC = {
   bloggersOpenBrowser: 'bloggers:open-browser',
   bloggersCapture: 'bloggers:capture',
   bloggersFetch: 'bloggers:fetch',
+  bloggersPause: 'bloggers:pause',
+  bloggersResume: 'bloggers:resume',
   bloggersStop: 'bloggers:stop',
   bloggersClear: 'bloggers:clear',
   bloggersExport: 'bloggers:export',
@@ -58,18 +62,20 @@ export const IPC = {
 
 export interface ElectronApi {
   bootstrap(): Promise<Result<BootstrapData>>;
+  quit(): Promise<Result<void>>;
   accounts: {
     list(): Promise<Result<AccountSummary[]>>;
     add(draft: AccountDraft): Promise<Result<AccountSummary>>;
-    update(id: EntityId, draft: AccountDraft): Promise<Result<AccountSummary>>;
+    update(id: EntityId, draft: { remark: string; cookies?: string }): Promise<Result<AccountSummary>>;
     remove(id: EntityId): Promise<Result<void>>;
     check(id: EntityId): Promise<Result<AccountSummary>>;
     checkAll(): Promise<Result<AccountSummary[]>>;
-    openLogin(provider: 'xingtu' | 'fangzhou'): Promise<Result<void>>;
+    openLogin(provider: 'xingtu' | 'fangzhou', remark: string): Promise<Result<void>>;
   };
   settings: {
     get(): Promise<Result<CollectionSettings>>;
     update(settings: CollectionSettings): Promise<Result<CollectionSettings>>;
+    chooseDirectory(): Promise<Result<string | null>>;
   };
   collection: {
     get(): Promise<Result<{ job: CollectionJob | null; items: CollectionItem[] }>>;
@@ -87,6 +93,8 @@ export interface ElectronApi {
     openBrowser(): Promise<Result<void>>;
     capture(): Promise<Result<BloggerFilterCapture>>;
     fetch(maxPages: number): Promise<Result<BloggerRow[]>>;
+    pause(): Promise<Result<void>>;
+    resume(): Promise<Result<void>>;
     stop(): Promise<Result<void>>;
     clear(): Promise<Result<void>>;
     export(): Promise<Result<string | null>>;

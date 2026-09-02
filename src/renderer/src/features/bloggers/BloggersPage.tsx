@@ -1,23 +1,84 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Download, Play, Square, Trash2, ExternalLink } from 'lucide-react';
+import { Download, ExternalLink, Pause, Play, Square, Trash2 } from 'lucide-react';
 import type { BloggerRow } from '../../../../shared/domain';
 import { DataTable } from '../../components/DataTable';
-import { Badge, Button, PageHeader, StatCard } from '../../components/ui';
+import { Badge, Button, PageHeader, ProgressBar, StatCard } from '../../components/ui';
 import { useConfirm } from '../../components/ConfirmProvider';
 import { useAppStore } from '../../store/appStore';
 
 const compact = (value: number) => value >= 10_000 ? `${(value / 10_000).toFixed(1)}万` : String(value || 0);
+
+const parsePage = (status: string): number => {
+  const match = status.match(/(\d+)\s*页/);
+  return match ? Number(match[1]) : 0;
+};
 
 export const BloggersPage = () => {
   const rows = useAppStore((state) => state.bloggers);
   const status = useAppStore((state) => state.bloggerStatus);
   const setError = useAppStore((state) => state.setError);
   const confirm = useConfirm();
-  const [maxPages, setMaxPages] = useState(100);
+  const [maxPages, setMaxPages] = useState(500);
   const [fetching, setFetching] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [captured, setCaptured] = useState(false);
   const invoke = async <T,>(action: () => Promise<{ ok: true; value: T } | { ok: false; error: { message: string } }>) => { const result = await action(); if (!result.ok) setError(result.error.message); return result; };
-  const fetchRows = async () => { setFetching(true); await invoke(() => window.api.bloggers.fetch(maxPages)); setFetching(false); };
+
+  const syncCapture = async (): Promise<void> => {
+    const result = await window.api.bloggers.capture();
+    if (result.ok) setCaptured(result.value.ready);
+  };
+
+  useEffect(() => {
+    void syncCapture();
+  }, []);
+
+  useEffect(() => {
+    if (status.includes('已捕获筛选请求')) setCaptured(true);
+    if (status.includes('请执行一次筛选')) setCaptured(false);
+  }, [status]);
+
+  const fetchPage = parsePage(status);
+  const percent = status.includes('获取完成')
+    ? 100
+    : maxPages > 0
+      ? Math.min(100, Math.round((fetchPage / maxPages) * 100))
+      : 0;
+  const showProgress = /已获取|获取完成|已停止|已暂停|正在获取/.test(status);
+
+  const openPlaza = async (): Promise<void> => {
+    await invoke(() => window.api.bloggers.openBrowser());
+    await syncCapture();
+  };
+
+  const fetchRows = async (): Promise<void> => {
+    if (!captured) {
+      setError('请先打开达人广场并完成一次筛选');
+      return;
+    }
+    setFetching(true);
+    setPaused(false);
+    await invoke(() => window.api.bloggers.fetch(maxPages));
+    setFetching(false);
+    setPaused(false);
+  };
+
+  const pauseFetch = async (): Promise<void> => {
+    setPaused(true);
+    await invoke(() => window.api.bloggers.pause());
+  };
+
+  const resumeFetch = async (): Promise<void> => {
+    setPaused(false);
+    await invoke(() => window.api.bloggers.resume());
+  };
+
+  const stopFetch = async (): Promise<void> => {
+    await invoke(() => window.api.bloggers.stop());
+    setPaused(false);
+  };
+
   const clearBloggers = async (): Promise<void> => {
     const confirmed = await confirm({
       title: '清空达人列表',
@@ -27,6 +88,7 @@ export const BloggersPage = () => {
     });
     if (confirmed) await invoke(() => window.api.bloggers.clear());
   };
+
   const columns = useMemo<Array<ColumnDef<BloggerRow>>>(() => [
     { accessorKey: 'nickname', header: '达人', size: 200, cell: ({ row }) => <div className="person-cell">{row.original.avatarUrl ? <img src={row.original.avatarUrl} alt="" /> : <span className="avatar-fallback">{row.original.nickname.slice(0, 1)}</span>}<div><strong>{row.original.nickname}</strong><span>{row.original.location || '地区未知'}</span></div></div> },
     { accessorKey: 'fans', header: '粉丝数', size: 110, cell: ({ row }) => compact(row.original.fans) },
@@ -41,10 +103,28 @@ export const BloggersPage = () => {
     { id: 'open', header: '', size: 60, enableSorting: false, cell: ({ row }) => <a className="icon-link" href={row.original.xingtuUrl} target="_blank" rel="noreferrer" title="打开星图主页"><ExternalLink size={16} /></a> },
   ], []);
   const averageFans = rows.length ? Math.round(rows.reduce((sum, row) => sum + row.fans, 0) / rows.length) : 0;
+  const busy = fetching || paused;
 
-  return <>
-    <PageHeader title="达人列表" description="在星图达人广场设置筛选条件后，按原筛选条件分页获取并保存达人快照。" actions={<><Button onClick={() => invoke(() => window.api.bloggers.openBrowser())}>打开达人广场</Button><label className="compact-field"><span>最大页数</span><input type="number" min={1} max={500} value={maxPages} onChange={(event) => setMaxPages(Number(event.target.value))} /></label>{fetching ? <Button variant="danger" onClick={() => invoke(() => window.api.bloggers.stop())}><Square size={15} />停止</Button> : <Button variant="primary" onClick={fetchRows}><Play size={16} />开始获取</Button>}</>} />
-    <div className="stats-grid stats-grid--compact"><StatCard label="达人总数" value={rows.length} hint={status || '等待捕获筛选条件'} /><StatCard label="平均粉丝" value={compact(averageFans)} /><StatCard label="有电商等级" value={rows.filter((row) => row.ecomLevel !== '-').length} /><StatCard label="有报价数据" value={rows.filter((row) => row.prices.some((price) => price !== '-')).length} /></div>
-    <DataTable data={rows} columns={columns} pageSize={100} virtualized searchPlaceholder="搜索达人、地区或标签" toolbar={<><Button onClick={() => invoke(() => window.api.bloggers.export())} disabled={!rows.length}><Download size={15} />导出</Button><Button variant="ghost" disabled={!rows.length} onClick={() => void clearBloggers()}><Trash2 size={15} />清空</Button></>} emptyTitle="尚未获取达人列表" emptyDescription="打开达人广场，完成一次筛选并点击搜索，然后返回这里开始获取。" />
-  </>;
+  return (
+    <div className="page">
+      <PageHeader title="达人列表" description="在星图达人广场设置筛选条件后，按原筛选条件分页获取并保存达人快照。" actions={<><Button onClick={() => void openPlaza()}>打开达人广场</Button><label className="compact-field"><span>最大页数</span><input type="number" min={1} max={500} value={maxPages} onChange={(event) => setMaxPages(Number(event.target.value))} /></label>{!busy ? <Button variant="primary" disabled={!captured} onClick={() => void fetchRows()}><Play size={16} />开始获取</Button> : null}{fetching && !paused ? <Button onClick={() => void pauseFetch()}><Pause size={16} />暂停</Button> : null}{paused ? <Button variant="primary" onClick={() => void resumeFetch()}><Play size={16} />继续</Button> : null}{busy ? <Button variant="danger" onClick={() => void stopFetch()}><Square size={15} />停止</Button> : null}</>} />
+      <div className="page-content collection-layout">
+        <div className="capture-hint"><span className={captured ? 'capture-dot capture-dot--ready' : 'capture-dot'} />{captured ? '已捕获筛选请求' : '打开达人广场并执行一次筛选，软件会自动捕获查询条件'}</div>
+        {showProgress && (
+          <div className="task-strip">
+            <div><span>获取进度</span><strong>{percent}%</strong></div>
+            <div className="task-strip__progress"><ProgressBar value={percent} /></div>
+            <div className="task-strip__stats"><span>{status || '等待开始获取'}</span></div>
+          </div>
+        )}
+        <div className="metric-grid">
+          <StatCard label="达人总数" value={rows.length} hint={status || '等待捕获筛选条件'} />
+          <StatCard label="平均粉丝" value={compact(averageFans)} />
+          <StatCard label="有电商等级" value={rows.filter((row) => row.ecomLevel !== '-').length} />
+          <StatCard label="有报价数据" value={rows.filter((row) => row.prices.some((price) => price !== '-')).length} />
+        </div>
+        <DataTable data={rows} columns={columns} pageSize={100} virtualized searchPlaceholder="搜索达人、地区或标签" toolbar={<><Button onClick={() => invoke(() => window.api.bloggers.export())} disabled={!rows.length}><Download size={15} />导出</Button><Button variant="ghost" disabled={!rows.length || busy} onClick={() => void clearBloggers()}><Trash2 size={15} />清空</Button></>} emptyTitle="尚未获取达人列表" emptyDescription="打开达人广场，完成一次筛选并点击搜索，然后返回这里开始获取。" />
+      </div>
+    </div>
+  );
 };

@@ -5,6 +5,7 @@ import type { AppEvent } from '../shared/domain';
 
 const api: ElectronApi = {
   bootstrap: () => ipcRenderer.invoke(IPC.bootstrap),
+  quit: () => ipcRenderer.invoke(IPC.appQuit),
   accounts: {
     list: () => ipcRenderer.invoke(IPC.accountsList),
     add: (draft) => ipcRenderer.invoke(IPC.accountsAdd, draft),
@@ -12,11 +13,12 @@ const api: ElectronApi = {
     remove: (id) => ipcRenderer.invoke(IPC.accountsRemove, id),
     check: (id) => ipcRenderer.invoke(IPC.accountsCheck, id),
     checkAll: () => ipcRenderer.invoke(IPC.accountsCheckAll),
-    openLogin: (provider) => ipcRenderer.invoke(IPC.accountsOpenLogin, provider),
+    openLogin: (provider, remark) => ipcRenderer.invoke(IPC.accountsOpenLogin, provider, remark),
   },
   settings: {
     get: () => ipcRenderer.invoke(IPC.settingsGet),
     update: (settings) => ipcRenderer.invoke(IPC.settingsUpdate, settings),
+    chooseDirectory: () => ipcRenderer.invoke(IPC.settingsChooseDirectory),
   },
   collection: {
     get: () => ipcRenderer.invoke(IPC.collectionGet),
@@ -34,6 +36,8 @@ const api: ElectronApi = {
     openBrowser: () => ipcRenderer.invoke(IPC.bloggersOpenBrowser),
     capture: () => ipcRenderer.invoke(IPC.bloggersCapture),
     fetch: (maxPages) => ipcRenderer.invoke(IPC.bloggersFetch, maxPages),
+    pause: () => ipcRenderer.invoke(IPC.bloggersPause),
+    resume: () => ipcRenderer.invoke(IPC.bloggersResume),
     stop: () => ipcRenderer.invoke(IPC.bloggersStop),
     clear: () => ipcRenderer.invoke(IPC.bloggersClear),
     export: () => ipcRenderer.invoke(IPC.bloggersExport),

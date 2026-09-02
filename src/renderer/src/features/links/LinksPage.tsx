@@ -44,10 +44,19 @@ export const LinksPage = () => {
     if (confirmed) await invoke(() => window.api.links.clear());
   };
 
-  return <>
-    <PageHeader title="链接转换" description="将抖音短链接或主页批量解析为标准抖音主页与星图主页。" actions={<><Button onClick={() => setModalOpen(true)} disabled={running}><FileUp size={16} />粘贴导入</Button><Button onClick={() => invoke(() => window.api.links.importFile())} disabled={running}><FileUp size={16} />文件导入</Button>{running ? <Button variant="danger" onClick={() => invoke(() => window.api.links.stop())}><Square size={15} />停止</Button> : <Button variant="primary" onClick={start} disabled={!items.length}><Play size={16} />开始转换</Button>}</>} />
-    <div className="stats-grid stats-grid--compact"><StatCard label="总链接" value={items.length} hint={status || '等待导入'} /><StatCard label="成功" value={items.filter((item) => item.status === 'ok').length} tone="success" /><StatCard label="未入驻星图" value={items.filter((item) => item.status === 'no-xingtu').length} tone="warning" /><StatCard label="失败" value={items.filter((item) => item.status === 'failed').length} tone="danger" /></div>
-    <DataTable data={items} columns={columns} searchPlaceholder="搜索原始链接、昵称或转换结果" toolbar={<><Button disabled={!failedIds.length || running} onClick={() => invoke(() => window.api.links.retry(failedIds))}><RotateCcw size={15} />重试失败项</Button><Button disabled={!items.length} onClick={() => invoke(() => window.api.links.export())}><Download size={15} />导出</Button><Button variant="ghost" disabled={!items.length || running} onClick={() => void clearLinks()}><Trash2 size={15} />清空</Button></>} emptyTitle="还没有待转换链接" emptyDescription="导入抖音主页、短链接或包含链接的文本。" />
-    <Modal open={modalOpen} onOpenChange={setModalOpen} title="粘贴待转换链接" description="系统会从文本中提取 HTTP/HTTPS 链接并自动去重。" footer={<><Button onClick={() => setModalOpen(false)}>取消</Button><Button variant="primary" disabled={!text.trim()} onClick={importText}>导入链接</Button></>}><label className="field"><span>链接文本</span><textarea rows={10} value={text} onChange={(event) => setText(event.target.value)} placeholder="每行一条，或直接粘贴分享文案" /></label></Modal>
-  </>;
+  return (
+    <div className="page">
+      <PageHeader title="链接转换" description="将抖音短链接或主页批量解析为标准抖音主页与星图主页。" actions={<><Button onClick={() => setModalOpen(true)} disabled={running}><FileUp size={16} />粘贴导入</Button><Button onClick={() => invoke(() => window.api.links.importFile())} disabled={running}><FileUp size={16} />文件导入</Button>{running ? <Button variant="danger" onClick={() => invoke(() => window.api.links.stop())}><Square size={15} />停止</Button> : <Button variant="primary" onClick={start} disabled={!items.length}><Play size={16} />开始转换</Button>}</>} />
+      <div className="page-content collection-layout">
+        <div className="metric-grid">
+          <StatCard label="总链接" value={items.length} hint={status || '等待导入'} />
+          <StatCard label="成功" value={items.filter((item) => item.status === 'ok').length} tone="success" />
+          <StatCard label="未入驻星图" value={items.filter((item) => item.status === 'no-xingtu').length} tone="warning" />
+          <StatCard label="失败" value={items.filter((item) => item.status === 'failed').length} tone="danger" />
+        </div>
+        <DataTable data={items} columns={columns} searchPlaceholder="搜索原始链接、昵称或转换结果" toolbar={<><Button disabled={!failedIds.length || running} onClick={() => invoke(() => window.api.links.retry(failedIds))}><RotateCcw size={15} />重试失败项</Button><Button disabled={!items.length} onClick={() => invoke(() => window.api.links.export())}><Download size={15} />导出</Button><Button variant="ghost" disabled={!items.length || running} onClick={() => void clearLinks()}><Trash2 size={15} />清空</Button></>} emptyTitle="还没有待转换链接" emptyDescription="导入抖音主页、短链接或包含链接的文本。" />
+      </div>
+      <Modal open={modalOpen} onOpenChange={setModalOpen} title="粘贴待转换链接" description="系统会从文本中提取 HTTP/HTTPS 链接并自动去重。" footer={<><Button onClick={() => setModalOpen(false)}>取消</Button><Button variant="primary" disabled={!text.trim()} onClick={importText}>导入链接</Button></>}><label className="field"><span>链接文本</span><textarea rows={10} value={text} onChange={(event) => setText(event.target.value)} placeholder="每行一条，或直接粘贴分享文案" /></label></Modal>
+    </div>
+  );
 };

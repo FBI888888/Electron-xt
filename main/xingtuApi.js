@@ -359,11 +359,18 @@ async function getAuthorBaseInfo(authorId, cookies, retryCount = 0) {
                         '达人昵称': result.nick_name || '',
                         '归属地': `${result.province || ''}${result.city || ''}`,
                         '性别': formatGender(result.gender),
-                        '抖音ID': result.short_id || '',
+                        '抖音ID': result.short_id || result.unique_id || '',
                         '抖音主页': result.sec_uid ? `https://www.douyin.com/user/${result.sec_uid}` : '',
                         'MCN机构': result.mcn_name || '',
                         '达人类型': tagsStr.trim(),
-                        '内容主题': (result.content_theme_labels || []).join('、')
+                        '内容主题': (result.content_theme_labels || []).join('、'),
+                        '粉丝数': result.follower || '',
+                        '平均播放': result.avg_play || '',
+                        '最低报价': result.lowest_price || '',
+                        '是否明星': result.is_star ? '是' : '否',
+                        '达人等级': result.grade || '',
+                        '电商开通': result.e_commerce_enable ? '是' : '否',
+                        '风格标签': (result.tags_author_style || []).join('、')
                     }
                 };
             } else {
@@ -431,7 +438,8 @@ async function getMonthlyLinkCount(authorId, cookies) {
                 return {
                     success: true,
                     data: {
-                        '月连接用户数': formatWan(result.link_cnt)
+                        '月连接用户数': formatWan(result.link_cnt),
+                        '发布视频数': result.release_videos_cnt || 0
                     }
                 };
             }
@@ -507,6 +515,14 @@ async function getMarketingInfo(authorId, cookies) {
                     }
                 }
                 
+                const namedPrices = {};
+                for (const item of priceInfo) {
+                    if (!item.enable || !item.desc || !item.price) continue;
+                    namedPrices[`报价-${item.desc}`] = item.price;
+                }
+                const hotList = (result.hot_list_ranks || []).map((item) =>
+                    `${item.hot_list_name || ''}${item.industry_name ? '·' + item.industry_name : ''}${item.rank_level ? '·第' + item.rank_level + '名' : ''}`
+                ).filter(Boolean).join('、');
                 return {
                     success: true,
                     data: {
@@ -514,7 +530,9 @@ async function getMarketingInfo(authorId, cookies) {
                         '报价-1-20s视频': price1_20,
                         '报价-21-60s视频': price21_60,
                         '报价-60s以上视频': price60plus,
-                        '其他报价': otherPrices.join('、')
+                        '其他报价': otherPrices.join('、'),
+                        '热门榜单': hotList,
+                        ...namedPrices
                     }
                 };
             }
@@ -1107,7 +1125,8 @@ async function getLinkUserStruct(authorId, cookies) {
                 return {
                     success: true,
                     data: {
-                        '连接用户-连接用户分布': `总数:${formatWan(total)}、了解:${formatWan(understand)}、兴趣:${formatWan(interest)}、喜欢:${formatWan(like)}、追随:${formatWan(follow)}`
+                        '连接用户-连接用户分布': `总数:${formatWan(total)}、了解:${formatWan(understand)}、兴趣:${formatWan(interest)}、喜欢:${formatWan(like)}、追随:${formatWan(follow)}`,
+                        '月深度用户数': formatWan(understand + interest + like)
                     }
                 };
             }
@@ -1167,6 +1186,117 @@ async function getAudienceProfile(authorId, cookies) {
  * 采集单个博主的所有数据
  * 每个接口都有重试机制，单个接口失败不影响其他接口
  */
+async function getAuthorGlobalInfo(authorId, cookies) {
+    const path = `/gw/api/aggregator/get_author_global_info?o_author_id=${authorId}`;
+    const options = getRequestOptions(path, cookies);
+    try {
+        const response = await makeRequest(options);
+        if (response.statusCode !== 200) return { success: false, message: '获取达人概览失败' };
+        const result = JSON.parse(response.data);
+        if (!result.base_resp || result.base_resp.status_code !== 0) return { success: false, message: '获取达人概览失败' };
+        return {
+            success: true,
+            data: {
+                '近30天有商单': result.has_order_30d ? '是' : '否',
+                '近90天有商单': result.has_order_90d ? '是' : '否',
+                '近30天有带货': result.has_product_30d ? '是' : '否',
+                '近90天有带货': result.has_product_90d ? '是' : '否'
+            }
+        };
+    } catch (e) {
+        return { success: false, message: e.message };
+    }
+}
+
+async function getAuthorTags(authorId, cookies) {
+    const path = `/gw/api/aggregator/get_author_tags?star_author_id=${authorId}`;
+    const options = getRequestOptions(path, cookies);
+    try {
+        const response = await makeRequest(options);
+        if (response.statusCode !== 200) return { success: false, message: '获取达人标签失败' };
+        const result = JSON.parse(response.data);
+        if (!result.base_resp || result.base_resp.status_code !== 0) return { success: false, message: '获取达人标签失败' };
+        return {
+            success: true,
+            data: {
+                '精选达人': result.author_tags_detail?.is_curated ? '是' : '否'
+            }
+        };
+    } catch (e) {
+        return { success: false, message: e.message };
+    }
+}
+
+async function getAuthorCpInfo(authorId, cookies) {
+    const path = `/gw/api/data_sp/author_cp_info?o_author_id=${authorId}&platform_source=1&platform_channel=1`;
+    const options = getRequestOptions(path, cookies);
+    try {
+        const response = await makeRequest(options);
+        if (response.statusCode !== 200) return { success: false, message: '获取预期成本失败' };
+        const result = JSON.parse(response.data);
+        if (!result.base_resp || result.base_resp.status_code !== 0) return { success: false, message: '获取预期成本失败' };
+        return {
+            success: true,
+            data: {
+                '预期CPE-21-60s': result.expect_cpe?.cpe_21_60 ?? '',
+                '预期CPE-60s以上': result.expect_cpe?.cpe_60 ?? '',
+                '预期CPM-21-60s': result.expect_cpm?.cpm_21_60 ?? '',
+                '预期CPM-60s以上': result.expect_cpm?.cpm_60 ?? '',
+                '预期播放量': result.expect_vv?.value ?? '',
+                '热门作品数': result.hot_item?.value ?? ''
+            }
+        };
+    } catch (e) {
+        return { success: false, message: e.message };
+    }
+}
+
+async function getOrderExperience(authorId, cookies, period = 30) {
+    const path = `/gw/api/aggregator/get_author_order_experience?o_author_id=${authorId}&period=${period}`;
+    const options = getRequestOptions(path, cookies);
+    try {
+        const response = await makeRequest(options);
+        if (response.statusCode !== 200) return { success: false, message: '获取商单经验失败' };
+        const result = JSON.parse(response.data);
+        if (!result.base_resp || result.base_resp.status_code !== 0) return { success: false, message: '获取商单经验失败' };
+        const industries = (result.order_experience_industries || []).map((item) => {
+            const name = item.industry?.name || '';
+            const rate = item.industry?.rate != null ? `${Math.round(item.industry.rate * 100)}%` : '';
+            return [name, rate].filter(Boolean).join(' ');
+        }).filter(Boolean);
+        const prefix = period === 90 ? '近90天' : '近30天';
+        const text = industries.join('、');
+        const data = { [`${prefix}商单行业经验`]: text };
+        if (period === 30) data['商单行业经验'] = text;
+        return { success: true, data };
+    } catch (e) {
+        return { success: false, message: e.message };
+    }
+}
+
+async function getEcomProductList(authorId, cookies, timePeriod) {
+    const path = `/gw/api/aggregator/get_author_video_live_linkage_product_list?star_author_id=${authorId}&time_period=${timePeriod}`;
+    const options = getRequestOptions(path, cookies);
+    const prefix = `转化价值-全部带货数据-近${timePeriod}天`;
+    const names = (list) => (list || []).map((item) => item.product_name).filter(Boolean).join('、');
+    try {
+        const response = await makeRequest(options);
+        if (response.statusCode !== 200) return { success: false, message: '获取带货商品失败' };
+        const result = JSON.parse(response.data);
+        if (!result.base_resp || result.base_resp.status_code !== 0) return { success: false, message: '获取带货商品失败' };
+        return {
+            success: true,
+            data: {
+                [`${prefix}-GMV商品`]: names(result.pay_amt_top10_prod_list),
+                [`${prefix}-好评商品`]: names(result.good_eval_rate_top10_prod_list),
+                [`${prefix}-新客商品`]: names(result.new_pay_ucnt_top10_prod_list)
+            }
+        };
+    } catch (e) {
+        return { success: false, message: e.message };
+    }
+}
+
 async function collectBloggerData(authorId, cookies, selectedFields = {}) {
     console.log(`[collectBloggerData] ========== 开始采集 authorId=${authorId} ==========`);
     console.log(`[collectBloggerData] 选择的字段: ${JSON.stringify(selectedFields)}`);
@@ -1201,6 +1331,24 @@ async function collectBloggerData(authorId, cookies, selectedFields = {}) {
     
     console.log(`[collectBloggerData] 5. 获取合作报价...`);
     await callApi(getMarketingInfo, 'getMarketingInfo', authorId, cookies);
+    await callApi(getAuthorGlobalInfo, 'getAuthorGlobalInfo', authorId, cookies);
+    await callApi(getAuthorTags, 'getAuthorTags', authorId, cookies);
+    await callApi(getAuthorCpInfo, 'getAuthorCpInfo', authorId, cookies);
+    await callApi(getOrderExperience, 'getOrderExperience-30', authorId, cookies, 30);
+    await callApi(getOrderExperience, 'getOrderExperience-90', authorId, cookies, 90);
+    {
+        const linkResult = await withRetry(() => getLinkUserStruct(authorId, cookies), 'getLinkUserStruct');
+        if (linkResult.success && linkResult.data) {
+            if (selectedFields['link-user']) {
+                Object.assign(allData, linkResult.data);
+            } else {
+                allData['月深度用户数'] = linkResult.data['月深度用户数'] ?? '';
+            }
+        } else if (!linkResult.success) {
+            errors.push(`getLinkUserStruct: ${linkResult.message || '未知错误'}`);
+        }
+        await sleep(80);
+    }
     
     // 可选字段
     if (selectedFields['spread-info']) {
@@ -1226,8 +1374,9 @@ async function collectBloggerData(authorId, cookies, selectedFields = {}) {
     }
     
     if (selectedFields['ecom-stat']) {
-        for (const period of [7, 30]) {
+        for (const period of [7, 30, 90]) {
             await callApi(getEcomStat, `getEcomStat-${period}`, authorId, cookies, period);
+            await callApi(getEcomProductList, `getEcomProductList-${period}`, authorId, cookies, period);
         }
     }
     
@@ -1254,10 +1403,6 @@ async function collectBloggerData(authorId, cookies, selectedFields = {}) {
         for (const range of [30, 90]) {
             await callApi(getContractInfo, `getContractInfo-${range}`, authorId, cookies, range);
         }
-    }
-    
-    if (selectedFields['link-user']) {
-        await callApi(getLinkUserStruct, 'getLinkUserStruct', authorId, cookies);
     }
     
     if (selectedFields['audience-profile']) {
@@ -1297,6 +1442,11 @@ module.exports = {
     getCommentHotWords,
     getContentHotWords,
     getPlayletTheme,
+    getAuthorGlobalInfo,
+    getAuthorTags,
+    getAuthorCpInfo,
+    getOrderExperience,
+    getEcomProductList,
     getContractInfo,
     getLinkUserStruct,
     getAudienceProfile
