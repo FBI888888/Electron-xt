@@ -1,9 +1,14 @@
 # Dependencies
 node_modules/
 
+# Runtime data
+/data/
+
 # Build output
 dist/
+dist-final/
 out/
+*.tsbuildinfo
 
 # IDE
 .idea/

@@ -40,7 +40,10 @@ const CLIENT_REQUEST_KEY = process.env.CLIENT_REQUEST_KEY || 'xhs-client-secret-
 function getCpuId() {
     try {
         if (process.platform === 'win32') {
-            const output = execSync('wmic cpu get processorid', { encoding: 'utf-8' });
+            const output = execSync('wmic cpu get processorid', {
+                encoding: 'utf-8',
+                stdio: ['ignore', 'pipe', 'ignore']
+            });
             const lines = output.trim().split('\n');
             return lines[1]?.trim() || '';
         } else if (process.platform === 'darwin') {
@@ -61,7 +64,10 @@ function getCpuId() {
 function getMotherboardSerial() {
     try {
         if (process.platform === 'win32') {
-            const output = execSync('wmic baseboard get serialnumber', { encoding: 'utf-8' });
+            const output = execSync('wmic baseboard get serialnumber', {
+                encoding: 'utf-8',
+                stdio: ['ignore', 'pipe', 'ignore']
+            });
             const lines = output.trim().split('\n');
             return lines[1]?.trim() || '';
         }
@@ -77,7 +83,10 @@ function getMotherboardSerial() {
 function getDiskSerial() {
     try {
         if (process.platform === 'win32') {
-            const output = execSync('wmic diskdrive get serialnumber', { encoding: 'utf-8' });
+            const output = execSync('wmic diskdrive get serialnumber', {
+                encoding: 'utf-8',
+                stdio: ['ignore', 'pipe', 'ignore']
+            });
             const lines = output.trim().split('\n');
             return lines[1]?.trim() || '';
         } else if (process.platform === 'darwin') {
@@ -94,7 +103,10 @@ function getDiskSerial() {
  * 生成唯一机器码
  * 结合多种硬件信息生成，防止单一硬件更换导致机器码变化
  */
+let cachedMachineCode = '';
+
 function generateMachineCode() {
+    if (cachedMachineCode) return cachedMachineCode;
     const cpuId = getCpuId();
     const motherboard = getMotherboardSerial();
     const disk = getDiskSerial();
@@ -116,7 +128,8 @@ function generateMachineCode() {
         .digest('hex');
     
     // 格式化为易读格式: XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX
-    return hash.toUpperCase().match(/.{1,4}/g).join('-');
+    cachedMachineCode = hash.toUpperCase().match(/.{1,4}/g).join('-');
+    return cachedMachineCode;
 }
 
 // ==================== 本地存储 ====================
@@ -220,12 +233,6 @@ function sendRequest(path, data) {
             .update(payload)
             .digest('hex');
         
-        // ========== DEBUG: 打印请求内容 ==========
-        console.log('\n========== 鉴权请求 ==========');
-        console.log('请求路径:', path);
-        console.log('请求数据:', JSON.stringify(data, null, 2));
-        console.log('===============================\n');
-        
         const options = {
             hostname: AUTH_SERVER.host,
             port: AUTH_SERVER.port,
@@ -287,13 +294,9 @@ function sendRequest(path, data) {
                         }
                     }
 
-                    // ========== DEBUG: 打印响应内容 ==========
-                    console.log('\n========== 鉴权响应 ==========');
-                    console.log('响应数据:', JSON.stringify(result, null, 2));
-                    console.log('===============================\n');
                     resolve(result);
                 } catch (e) {
-                    console.error('解析响应失败, 原始响应:', body);
+                    console.error('解析鉴权响应失败');
                     reject(new Error('解析响应失败'));
                 }
             });
@@ -336,7 +339,8 @@ async function activate(licenseKey, force = false) {
                 system_type: result.data.system_type,
                 member_level: result.data.member_level,
                 expire_at: result.data.expire_at,
-                activated_at: new Date().toISOString()
+                activated_at: new Date().toISOString(),
+                last_verify: new Date().toISOString()
             });
         }
 
