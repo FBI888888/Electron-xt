@@ -67,7 +67,7 @@ export const CollectionPage = () => {
     const confirmed = await confirm({
       title: '清空采集任务',
       description: '当前任务、任务条目和已保存快照将被永久删除，此操作无法撤销。',
-      confirmLabel: '清空任务',
+      confirmLabel: '清空列表',
       tone: 'danger',
     });
     if (confirmed) await invoke(() => window.api.collection.clear());
@@ -76,7 +76,7 @@ export const CollectionPage = () => {
 
   return (
     <div className="page">
-      <PageHeader title="采集任务" description="导入达人主页，创建可暂停、可恢复并保留部分结果的数据快照任务。" actions={<><Button onClick={() => setImportOpen(true)} disabled={running || paused}><FileUp size={16} />粘贴导入</Button><Button onClick={() => invoke(() => window.api.collection.importFile())} disabled={running || paused}><FileUp size={16} />文件导入</Button>{!running && !paused ? <Button variant="primary" disabled={!job || busy} onClick={() => job && invoke(() => window.api.collection.start(job.id))}><Play size={16} />开始采集</Button> : null}</>} />
+      <PageHeader title="采集任务" description="导入达人主页，创建可暂停、可恢复并保留部分结果的数据快照任务。" actions={<><Button onClick={() => setImportOpen(true)} disabled={running || paused}><FileUp size={16} />粘贴导入</Button><Button onClick={() => invoke(() => window.api.collection.importFile())} disabled={running || paused}><FileUp size={16} />文件导入</Button>{!running && !paused ? <Button variant="primary" disabled={!job || busy} onClick={() => job && invoke(() => window.api.collection.start(job.id))}><Play size={16} />开始采集</Button> : null}<Button disabled={items.length === 0 || running || paused || busy} onClick={() => void clearCollection()}><Trash2 size={16} />清空列表</Button></>} />
       <div className="page-content collection-layout">
         <section className="task-strip">
           <div><span>任务状态</span><Badge tone={jobTone(job?.status)}>{jobStatusLabel[job?.status ?? 'idle']}</Badge></div>
@@ -93,7 +93,7 @@ export const CollectionPage = () => {
             {running || paused ? <Button variant="danger" onClick={() => job && invoke(() => window.api.collection.stop(job.id))}><Square size={15} />停止</Button> : null}
           </div>
         </section>
-        <DataTable data={items} columns={columns} searchPlaceholder="搜索主页、昵称或星图 ID" toolbar={<><Button disabled={failedIds.length === 0 || running || paused} onClick={() => invoke(() => window.api.collection.retry(failedIds))}><RotateCcw size={15} />重试失败项</Button><Button disabled={!job || running || paused} onClick={() => job && invoke(() => window.api.collection.export(job.id))}><FileDown size={15} />导出快照</Button><Button variant="ghost" disabled={items.length === 0 || running || paused} onClick={() => void clearCollection()}><Trash2 size={15} />清空</Button></>} emptyTitle="还没有采集目标" emptyDescription="通过 Excel、TXT 文件或粘贴文本导入星图/抖音主页。" />
+        <DataTable data={items} columns={columns} searchPlaceholder="搜索主页、昵称或星图 ID" toolbar={<><Button disabled={failedIds.length === 0 || running || paused} onClick={() => invoke(() => window.api.collection.retry(failedIds))}><RotateCcw size={15} />重试失败项</Button><Button disabled={!job || running || paused} onClick={() => job && invoke(() => window.api.collection.export(job.id))}><FileDown size={15} />导出快照</Button></>} emptyTitle="还没有采集目标" emptyDescription="通过 Excel、TXT 文件或粘贴文本导入星图/抖音主页。" />
       </div>
       <Modal open={importOpen} onOpenChange={setImportOpen} title="粘贴采集目标" description="支持星图主页、抖音主页与抖音短链接，自动去重并报告无效内容。" footer={<><Button onClick={() => setImportOpen(false)}>取消</Button><Button variant="primary" disabled={!text.trim() || busy} onClick={importText}>创建任务</Button></>}><label className="field"><span>主页链接</span><textarea rows={10} value={text} onChange={(event) => setText(event.target.value)} placeholder="每行一个链接，也可以直接粘贴包含链接的文本" /></label></Modal>
     </div>

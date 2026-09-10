@@ -14,12 +14,32 @@ const toWan = (value: unknown): string => {
   return number >= 10_000 ? `${(number / 10_000).toFixed(1)}w` : String(number);
 };
 
+const fallbackSnapshots = (
+  snapshots: CollectionSnapshot[],
+  items: CollectionItem[],
+): CollectionSnapshot[] => {
+  const covered = new Set(snapshots.map((snapshot) => snapshot.itemId));
+  return items
+    .filter((item) => ['ok', 'partial'].includes(item.status) && !covered.has(item.id))
+    .map((item) => ({
+      itemId: item.id,
+      authorId: item.authorId ?? '',
+      data: {
+        达人昵称: item.nickname,
+        粉丝数: item.fans,
+      },
+      errors: item.errors,
+      createdAt: item.collectedAt ?? new Date().toISOString(),
+    }));
+};
+
 export const buildSnapshotExportData = (
   snapshots: CollectionSnapshot[],
   items: CollectionItem[],
   isSvip: boolean,
 ): SnapshotExportData => {
   const itemById = new Map(items.map((item) => [item.id, item]));
+  const effectiveSnapshots = [...snapshots, ...fallbackSnapshots(snapshots, items)];
   const prefixFields = [
     '星图ID',
     '星图主页',
@@ -42,7 +62,7 @@ export const buildSnapshotExportData = (
     '内容主题',
   ];
   const skipped = new Set([...prefixFields, 'authorId', 'author_id', '微信号']);
-  const sanitizedData = snapshots.map((snapshot) => {
+  const sanitizedData = effectiveSnapshots.map((snapshot) => {
     const data = { ...snapshot.data };
     if (!isSvip) delete data['微信号'];
     return { snapshot, item: itemById.get(snapshot.itemId), data };

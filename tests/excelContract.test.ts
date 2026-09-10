@@ -1,6 +1,8 @@
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import * as XLSX from 'xlsx';
 import { buildLinkExportRows, buildSnapshotExportData } from '../src/main/services/excelRows';
 import type { CollectionItem, CollectionSnapshot, LinkConversionItem } from '../src/shared/domain';
 
@@ -122,5 +124,33 @@ describe('Excel 导出契约', () => {
     expect(source).toMatch(/bloggersFetch[\s\S]*?await ensurePremium\(\)/);
     expect(source).toMatch(/bloggersExport[\s\S]*?await ensurePremium\(\)/);
     expect(source).toContain("const isSvip = services.license.get().level === 'SVIP'");
+  });
+
+  it('snapshot 缺失时用已成功条目兜底达人昵称和粉丝数', () => {
+    const result = buildSnapshotExportData([], [item], false);
+    expect(result.rows).toHaveLength(1);
+    expect(result.rows[0]?.['达人昵称']).toBe('备用昵称');
+    expect(result.rows[0]?.['星图ID']).toBe('author-1');
+    expect(result.rows[0]?.['粉丝数']).toBe('12345');
+    expect(result.header[0]).toBe('星图ID');
+  });
+
+  it('有 snapshot 时写出后再读回表头和达人昵称', () => {
+    const exportData = buildSnapshotExportData([snapshot], [item], false);
+    const workbook = XLSX.utils.book_new();
+    const aoa = [exportData.header, ...exportData.rows.map((row) => exportData.header.map((key) => row[key] ?? ''))];
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(aoa), '采集数据');
+    const directory = mkdtempSync(join(tmpdir(), 'xt-export-'));
+    const filePath = join(directory, 'collected_data.xlsx');
+    try {
+      XLSX.writeFile(workbook, filePath);
+      const read = XLSX.readFile(filePath);
+      const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(read.Sheets['采集数据']!);
+      expect(rows).toHaveLength(1);
+      expect(rows[0]?.['达人昵称']).toBe('测试达人');
+      expect(rows[0]?.['星图ID']).toBe('author-1');
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
   });
 });

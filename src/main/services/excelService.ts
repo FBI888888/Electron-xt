@@ -66,7 +66,9 @@ const saveRows = async (options: {
   });
   if (!selection.filePath) return null;
   const workbook = XLSX.utils.book_new();
-  const worksheet = XLSX.utils.json_to_sheet(options.rows, options.header ? { header: options.header } : undefined);
+  const header = options.header ?? Object.keys(options.rows[0] ?? {});
+  const aoa = [header, ...options.rows.map((row) => header.map((key) => row[key] ?? ''))];
+  const worksheet = XLSX.utils.aoa_to_sheet(aoa);
   XLSX.utils.book_append_sheet(workbook, worksheet, options.sheetName);
   XLSX.writeFile(workbook, selection.filePath);
   return selection.filePath;
